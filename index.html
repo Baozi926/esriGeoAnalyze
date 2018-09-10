@@ -25,13 +25,24 @@
       "esri/views/MapView",
       "src/geo-ana/index",
       'esri/config',
+      "esri/layers/FeatureLayer",
+      'esri/layers/MapImageLayer',
       "dojo/domReady!"
-    ], function (Map, MapView, GeoAna, esriConfig) {
+    ], function (Map, MapView, GeoAna, esriConfig, FeatureLayer, MapImageLayer) {
+
+      var TOKEN = 'd0WuVzxeqASu8kopAnhwzVTeCDVW-aKzO3gyt9PYIY1L7zVu4OSa2y5vHNCFYe3WfckfS1-JtzCOD-VGEVACsqR0uLQcOa8KzCa-vhURgqVx7Xiyx3X1F_cSe3tzcfHh1jfjJ9xkDFtWiaBA8tUuhd2DyMGLikaEFIw8M-HLCS4.'
 
       esriConfig.request.proxyUrl = './src/proxy/proxy.jsp';
+      esriConfig.request.forceProxy = true;
+
       var map = new Map({
         basemap: "streets"
       });
+
+
+
+
+
       var view = new MapView({
         container: "viewDiv",  // Reference to the scene div created in step 5
         map: map,  // Reference to the map object created before the scene
@@ -39,11 +50,19 @@
         center: [15, 65]  // Sets center point of view using longitude,latitude
       });
 
+      map.add(new MapImageLayer({
+        url: 'https://map.xyzhgt.com/arcgis/rest/services/test/testPoint/MapServer',
+        token: TOKEN
+      }))//
+
+
+
+
       geoAna = new GeoAna({
         user: {
           username: 'admin',
           password: 'Esri1234',
-          token: 'YRzJiiRPNLtN79DTRivaSe-j1yDAb9ydNCiirpnfWZ_Ij2gTIDLBFLqXJdU7EJ2XCjPRDenuDfGw7DqYbuga8LLUbNXW7lz0tFYJeypD7Xz36Z3B1TsWHXdYy4Ek6xm5SvT9yPtVY8mtQ6--spYdIM-mFBxaXedRfEsmxLide80.'
+          token: TOKEN
         },
         portalUrl: 'https://map.xyzhgt.com/arcgis/',
         mapView: view,

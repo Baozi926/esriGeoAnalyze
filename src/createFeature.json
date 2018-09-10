@@ -1,0 +1,27 @@
+{
+  "currentVersion": 10.2,
+  "serviceDescription": "",
+  "hasVersionedData": false,
+  "supportsDisconnectedEditing": false,
+  "hasStaticData": true,
+  "maxRecordCount": 2000,
+  "supportedQueryFormats": "JSON",
+  "capabilities": "Query",
+  "description": "",
+  "copyrightText": "",
+  "allowGeometryUpdates": false,
+  "syncEnabled": false,
+  "editorTrackingInfo": {
+    "enableEditorTracking": false,
+    "enableOwnershipAccessControl": false,
+    "allowOthersToUpdate": true,
+    "allowOthersToDelete": true
+  },
+  "xssPreventionInfo": {
+    "xssPreventionEnabled": true,
+    "xssPreventionRule": "InputOnly",
+    "xssInputRule": "rejectInvalid"
+  },
+  "tables": [],
+  "name": "test_111"
+}

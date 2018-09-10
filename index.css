@@ -3,14 +3,14 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 300px;
+  width: 350px;
   height: 100%;
   background: white;
 }
 
 #viewDiv{
   position: absolute;
-  left: 300px;
+  left: 350px;
   top: 0;
   right: 0;
   bottom: 0;

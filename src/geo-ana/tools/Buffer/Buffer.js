@@ -31,7 +31,6 @@ define([
       this.mapView = options.mapView;
       this.portalUrl = options.portalUrl;
 
-      window.bufferAna = this;
       this.user = options.user;
       this.analyzeService = options.analyzeService;
 
@@ -85,7 +84,7 @@ define([
           .forEach(this.user.info.folders, function (v) {
             domConstruct.create('option', {
               value: v.id,
-              innerHTML: v.name
+              innerHTML: v.title
             }, this.resultFolderNode)
           }, this);
       }

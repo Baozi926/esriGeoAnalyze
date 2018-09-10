@@ -204,7 +204,7 @@ define([
 
       esriRequest(url, {
           query: param,
-          method: 'post'
+          method: 'get'
         }).then(lang.hitch(this, function (res) {
         this.jobId = res.data.jobId;
         console.log('jobId:' + this.jobId)
@@ -235,7 +235,7 @@ define([
       var interval = setInterval(function () {
         esriRequest(url, {
             query: param,
-            method: 'post'
+            method: 'get'
           })
           .then(lang.hitch(this, function (res) {
             event.emit('msg', res.data)
@@ -250,7 +250,7 @@ define([
             }
 
           }), function (err) {
-            throw new Error('gp 执行错误')
+            throw new Error('gp 执行错误:' + err)
           });
       }, 2000)
 
