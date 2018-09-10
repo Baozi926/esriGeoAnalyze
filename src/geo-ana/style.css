@@ -1,0 +1,132 @@
+.geoAna>.tool-list .tool-category-title {
+  font-size: 14px;
+  color: #ff5200;
+  padding: 8px 5px;
+}
+
+.tool-container .item-list>.tool-item {
+  float: left;
+  padding: 5px;
+  text-align: center;
+  width: 25%;
+}
+
+.tool-content .main-title {
+  font-size: 17px;
+}
+
+.tool-content .main-content .step .title::before {
+  margin-right: 13px;
+  border-radius: 50%;
+  padding: 3px 7px 1px 6px;
+  background: #5daddd;
+  color: #fff;
+  font-size: 143%;
+  position: relative;
+  font-weight: 600;
+  text-align: center
+}
+
+.tool-content .main-content .step._1 .title::before {
+  content: ' 1 ';
+}
+
+.tool-content .main-content .step._2 .title::before {
+  content: ' 2 ';
+}
+
+.tool-content .main-content .step._3 .title::before {
+  content: ' 3 ';
+}
+
+.tool-content .main-content .step._4 .title::before {
+  content: ' 4 ';
+  border-radius: 50%;
+  padding: 3px 7px 1px 6px;
+  background: #5daddd;
+  color: #fff;
+  font-size: 143%;
+  position: relative;
+  font-weight: 600;
+  text-align: center
+}
+
+.tool-container .item-list>.tool-item>.pic {
+  background-color: #E8E8E8;
+  display: inline-block;
+  height: 60px;
+  width: 90px;
+  border: 1px solid #ccc;
+}
+
+.geoAna>.tool-list .tool-category-title::before {
+  content: "\f02e";
+  display: inline-block;
+  font-family: FontAwesome;
+  text-align: left;
+  width: 16px;
+}
+
+.geoAna>.tool-list {
+  display: none
+}
+
+.geoAna>.tool-list.active {
+  display: block
+}
+
+.geoAna>.tool-content {
+  display: none;
+}
+
+.geoAna>.tool-content.active {
+  display: block;
+}
+
+.tool-content .go-back {
+  float: right;
+  color: #ffffff;
+  background-color: #0085D7;
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin-right: 10px;
+}
+
+.geoAna input {
+  border-bottom: 0.5px solid #ccc;
+}
+
+.widget .step {
+  font-size: 13px;
+  padding: 15px 10px 17px 6px;
+  border-bottom: 1px solid #ccc;
+}
+
+.run.btn{
+  border-radius: 7px;
+  padding: 3px 9px;
+}
+
+.widget.buffer {
+  /* background-color: rgba(102, 170, 81, 0.2) */
+}
+
+.step.error {
+  background-color: rgba(170, 81, 81, 0.8)
+}
+
+.buffer-options>ul>li.active {
+  background-color: rgba(186, 197, 31, 0.8)
+}
+
+.buffer-type-select>ul>li.active {
+  background-color: rgba(186, 197, 31, 0.8)
+}
+
+.buffer-options-switch.expand {
+  background-color: rgba(197, 31, 161, 0.8)
+}
+
+.buffer-options-switch {
+  background-color: rgba(31, 172, 197, 0.8)
+}
