@@ -1,4 +1,4 @@
-# 空间分析工具
+# arcgis 空间分析工具
 #### 为 arcgis javascript 4.0+ 打造的空间分析工具
 
 因为arcgis JavaScript api 4.0+ 的空间分析并没有出来，所以在项目中若需要用 4以上的api又需要空间分析，就没办法了。
