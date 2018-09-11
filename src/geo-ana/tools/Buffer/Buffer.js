@@ -399,7 +399,7 @@ define([
               rule: [
                 {
                   msg: '请选择计算缓冲区的对应字段',
-                  valid: function (value, params) {
+                  valid: function (value) {
                     if (that.getParam('buffer_type') === 'distance') {
                       return true;
                     } else if (that.getParam('buffer_type') === 'field') {
@@ -430,7 +430,7 @@ define([
               rule: [
                 {
                   msg: '请输入缓冲区计算距离（例如：1 或 1 2 4 ）',
-                  valid: function (value, params) {
+                  valid: function (value) {
                     if (that.getParam('buffer_type') === 'distance') {
                       return value != null && value != ''
                     } else if (that.getParam('buffer_type') === 'field') {

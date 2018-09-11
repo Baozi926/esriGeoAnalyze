@@ -107,9 +107,15 @@ define([
                       dfd.resolve({success: true, serviceUrl: this.param.createServiceUrl});
                     }))
                     //任务失败
-                    evt.on('error', lang.hitch(this, function (errs) {
-                      this._removeCreatedService()
-                      dfd.reject(errs);
+                    evt.on('error', lang.hitch(this, function (res) {
+                      this._removeCreatedService();
+                      var msg = '';
+
+                      ArrayUtil.forEach(res.messages, function (v, k) {
+                        msg += k + ': ' + v.description + '\n';
+                      }, this);
+                      console.log(msg);
+                      dfd.reject(msg);
                     }))
                   }), lang.hitch(this, function (err) {
                     this._removeCreatedService();
@@ -243,6 +249,9 @@ define([
             if (res.data.jobStatus === 'esriJobFailed') {
               window.clearInterval(interval)
               this._jobDone = true;
+
+
+              
               event.emit('error',res.data)
             } else if (res.data.jobStatus === 'esriJobSucceeded') {
               this._jobDone = true;

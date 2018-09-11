@@ -10,11 +10,11 @@ define([
   /**
    * @class
    * @classdesc 空间分析基类，提供参数管理和验证的能力
-   * 
+   *
   */
   var widget = declare('caihm.geoAna.baseTool', [], {
 
-    postCreate: function () {
+    postCreate() {
       if (this.initParams && lang.isFunction(this.initParams)) {
         this._params = this.initParams();
       } else {
@@ -27,7 +27,7 @@ define([
      * @description 生成一个参数的Object
      *
     */
-    getTransParam: function () {
+    getTransParam() {
       var result = {};
       for (var i = 0; i < this._params.length; i++) {
         var step = this._params[i];
@@ -43,7 +43,7 @@ define([
      * 通过参数名，设置参数
      *
     */
-    setParam: function (name, value) {
+    setParam (name, value) {
       var flag = false;
       for (var i = 0; i < this._params.length; i++) {
         var step = this._params[i];
@@ -64,7 +64,7 @@ define([
      * @description 根据参数名称获取参数
      *
      */
-    getParam: function (name) {
+    getParam (name) {
       for (var i = 0; i < this._params.length; i++) {
         var step = this._params[i];
         for (var key in step.params) {
@@ -81,7 +81,7 @@ define([
      * @description 检查参数是否有效
      *
      */
-    checkParam: function () {
+    checkParam () {
       var allValid = true;
       arrayUtil.forEach(this._params, function (div) {
         domClass.remove(div.srcNode, 'error');
