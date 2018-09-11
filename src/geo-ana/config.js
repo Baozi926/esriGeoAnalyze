@@ -36,7 +36,8 @@ define([], function () {
           {
             name: 'demo',
             icon: 'network',
-            url: 'tools/Demo/Demo'
+            url: 'tools/Demo/Demo',
+            pic: './src/geo-ana/images/FindHotSpots32.png'
           }
         ]
       }

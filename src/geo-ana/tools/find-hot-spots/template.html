@@ -7,7 +7,7 @@
     <div class="step _1" data-dojo-attach-point="step_1_node" >
       <span class="title">选择需要计算的点图层</span>
       <div class="content">
-        <select data-dojo-attach-point="layerChooseNode" data-dojo-attach-event='onchange: inputLayerChange'>
+        <select class="mt" data-dojo-attach-point="layerChooseNode" data-dojo-attach-event='onchange: inputLayerChange'>
         </select>
       </div>
     </div>
@@ -15,7 +15,7 @@
     <div class="step _2" data-dojo-attach-point="step_2_node">
       <span class="title">设置聚类方式</span>
       <div class="content">
-        <select class="row" data-dojo-attach-point="clusterAttrNode" data-dojo-attach-event="onchange:clusterAttrChange">
+        <select class="mt" class="row" data-dojo-attach-point="clusterAttrNode" data-dojo-attach-event="onchange:clusterAttrChange">
         </select>
         <div class="row title">计算某区域内的点数</div>
         <select class="row" data-dojo-attach-point="clusterShapeTypeNode" data-dojo-attach-event="onchange:shapeTypeChange">
@@ -35,8 +35,8 @@
     </div>
 
     <div class="step _4" data-dojo-attach-point="step_4_node">
-      <span class="title">结果图层名称</span>
-      <input data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
+      <div class="title">结果图层名称</div>
+      <input type="text" class="mt mbh" data-dojo-attach-event='onchange: resultNameChange' />将结果存在
       <select data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
         <option selected disabled hidden>请选择</option>
         <option value="admin">管理员</option>

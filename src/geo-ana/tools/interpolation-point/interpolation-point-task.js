@@ -28,12 +28,11 @@ define([
 
               event.on('success', lang.hitch(this, function (res) {
                 console.log(res)
-                debugger
+                
                 dfd.resolve({success: true, serviceUrl: param.portalItem.url});
               }));
 
               event.on('error', lang.hitch(this, function (res) {
-                debugger;
                 var msg = '';
 
                 ArrayUtil.forEach(res.messages, function (v, k) {

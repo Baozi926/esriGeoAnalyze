@@ -50,6 +50,7 @@ define([
         for (var key in step.params) {
           if (key === name) {
             step.params[name].value = value
+            console.log(name,value);
             flag = true;
             break;
           }

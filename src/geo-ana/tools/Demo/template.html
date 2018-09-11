@@ -1,4 +1,4 @@
-<div class="widgets">
+<div class="widget" style="padding: 7px;">
 
   <div class="main-title">
     <span class="text">Demo</span>
@@ -6,8 +6,8 @@
   <div class="main-content">
     <div class="step _3" data-dojo-attach-point="stepNode_3" >
       <span class="title">结果图层名称</span>
-      <input data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
-      <select data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
+      <input class="mt mbh" type="text" data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
+      <select class="mth" data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
         <option selected disabled hidden>请选择</option>
         <option value="admin">管理员</option>
       </select>
@@ -15,9 +15,8 @@
 
     <div class="step">
       <input class="cbox" checked type="checkbox" data-dojo-attach-point='useCurrentExtent_Node' data-dojo-attach-event='onchange: useCurrentExtentChange'
-      />使用当前地图范围
-      <button  class="btn run" data-dojo-attach-event='onclick: runTask'>运行分析</button>
-
+      />使用当前地图范围<br>
+      <button class="btn run mt" data-dojo-attach-event="onclick: runTask"><i class="fa fa-refresh fa-spin fa-fw"></i> 运行分析</button>
     </div>
   </div>
 

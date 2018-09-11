@@ -5,45 +5,48 @@
   <div class="main-content">
     <div class="step _1" data-dojo-attach-point="stepNode_1">
       <span class="title">选择包含缓冲区要素的图层</span>
-      <select data-dojo-attach-point="layerChooseNode" data-dojo-attach-event='onchange: inputLayerChange'>
+      <div class="mt"><select data-dojo-attach-point="layerChooseNode" data-dojo-attach-event='onchange: inputLayerChange'>
         <option selected disabled hidden>请选择</option>
         <option value="lake">lake</option>
         <option value="river">river</option>
-      </select>
+      </select></div>
     </div>
 
     <div class="step _2" data-dojo-attach-point="stepNode_2">
       <span class="title">输入缓冲区距离</span>
       <div class="buffer-type-select">
-        <ul>
-          <li data-dojo-attach-point='buffer_type_distance_switch_Node' data-dojo-attach-event='onclick: select_buffer_type_distance'>距离</li>
-          <li data-dojo-attach-point='buffer_type_field_switch_Node' data-dojo-attach-event='onclick: select_buffer_type_field'>字段</li>
+        <ul class="c my">
+          <li style="float:left;margin-right: 10px;" data-dojo-attach-point='buffer_type_distance_switch_Node'>
+            <label><input type="radio" checked name="bufferType_01"  data-dojo-attach-event='onclick: select_buffer_type_distance'/>距离</label></li>
+          <li style="float:left;" data-dojo-attach-point='buffer_type_field_switch_Node'>
+            <label><input type="radio" name="bufferType_01"  data-dojo-attach-event='onclick: select_buffer_type_field'/>字段</label></li>
         </ul>
       </div>
       <div data-dojo-attach-point='buffer_type_distance_Node'>
         <span class="text">输入缓冲区距离</span>
-        <input data-dojo-attach-event='onkeyUp: distanceChange' />
-        <select data-dojo-attach-point="distanceUnitNode" data-dojo-attach-event='onchange: distanceUnitChange'>
+        <div class="myh"><input type="text" data-dojo-attach-event='onkeyUp: distanceChange' style="width: 180px;"/>
+          <select style="width: 80px;" data-dojo-attach-point="distanceUnitNode" data-dojo-attach-event='onchange: distanceUnitChange'>
 
-        </select>
+          </select></div>
       </div>
       <div data-dojo-attach-point='buffer_type_field_Node'>
         <span class="text">输入用于计算缓冲区的字段</span>
-        <select data-dojo-attach-point="fieldChooseNode" data-dojo-attach-event='onchange: fieldChange'>
+        <div class="myh">
+          <select style="width: 180px;" data-dojo-attach-point="fieldChooseNode" data-dojo-attach-event='onchange: fieldChange'>
 
         </select>
-        <select data-dojo-attach-point="distanceUnitNode2" data-dojo-attach-event='onchange: distanceUnitChange'>
+          <select style="width: 80px;" data-dojo-attach-point="distanceUnitNode2" data-dojo-attach-event='onchange: distanceUnitChange'>
 
-        </select>
+          </select></div>
       </div>
-      <span class="buffer-options-switch" data-dojo-attach-event='onclick: switch_buffer_options'>选项</span>
-      <div class="buffer-options" style="display:none" data-dojo-attach-point='buffer_options_Node'>
-        <ul>
-          <li class="overlap" data-dojo-attach-point='buffer_options_overlap_Node' data-dojo-attach-event='onclick: buffer_options_ChangeOverlap'>
-            叠加
+      <span class="buffer-options-switch" data-dojo-attach-event='onclick: switch_buffer_options'>选项:</span>
+      <div style="display: inline-block;vertical-align: top;" class="buffer-options"  data-dojo-attach-point='buffer_options_Node'>
+        <ul style="display: inline-block;vertical-align: top;" class="c">
+          <li style="float:left;margin-right: 10px;" class="overlap" data-dojo-attach-point='buffer_options_overlap_Node'>
+            <label><input type="radio" checked name="bufferOverlap_01" data-dojo-attach-event='onclick: buffer_options_ChangeOverlap'/>叠加</label>
           </li>
-          <li class="dissolve" data-dojo-attach-point='buffer_options_dissolve_Node' data-dojo-attach-event='onclick: buffer_options_ChangeDissolve'>
-            融合
+          <li style="float:left;" class="dissolve" data-dojo-attach-point='buffer_options_dissolve_Node' >
+            <label><input type="radio" name="bufferOverlap_01" data-dojo-attach-event='onclick: buffer_options_ChangeDissolve'/>融合</label>
           </li>
         </ul>
 
@@ -52,8 +55,8 @@
     </div>
     <div class="step _3" data-dojo-attach-point="stepNode_3">
       <span class="title">结果图层名称</span>
-      <input data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
-      <select data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
+      <div class="mt mbh"><input type="text" data-dojo-attach-event='onchange: resultNameChange'/></div> 将结果存在
+      <select class="mth" data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
         <option selected disabled hidden>请选择</option>
         <option value="admin">管理员</option>
       </select>
@@ -61,8 +64,8 @@
 
     <div class="step">
       <input class="cbox" checked type="checkbox" data-dojo-attach-point='useCurrentExtent_Node' data-dojo-attach-event='onchange: useCurrentExtentChange'
-      />使用当前地图范围
-      <button  class="btn run" data-dojo-attach-event='onclick: doBuffer'>运行分析</button>
+      />使用当前地图范围<br>
+      <button  class="btn run mt" data-dojo-attach-event='onclick: doBuffer'>运行分析</button>
 
     </div>
   </div>

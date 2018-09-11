@@ -1,9 +1,36 @@
+html,
+body{
+	padding:0;
+	margin:0;
+	height:100%;
+	width:100%;
+	font-family:"Microsoft YaHei", "Avenir LT W01 65 Medium", Arial, Helvetica, sans-serif; color:#444; line-height:1.5;
+}
+*{box-sizing:border-box;}
+ul,li{list-style:none; padding:0; margin:0;}
+.mt{ margin-top:10px;}
+.mb{ margin-bottom:10px;}
+.ml{ margin-left:10px;}
+.m4{ margin-right:10px;}
+.mx{ margin-left:10px; margin-right:10px; }
+.my{ margin-top:10px; margin-bottom:10px;}
+.mth{ margin-top:5px; }
+.mbh{ margin-bottom:5px; }
+.mlh{ margin-left:5px; }
+.m4h{ margin-right:5px; }
+.mxh{ margin-left:5px; margin-right:5px; }
+.myh{ margin-top:5px; margin-bottom:5px; }
 .geoAna>.tool-list .tool-category-title {
   font-size: 14px;
   color: #ff5200;
   padding: 8px 5px;
 }
-
+.geoAna select{
+	display:inline-block; width:100%; height:32px; padding:0px 5px; line-height:1.5; color:#495057; background:#fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center; background-size:8px 10px; border:1px solid #CBCBCB; border-radius:0; -webkit-appearance:none; -moz-appearance:none; appearance:none;
+}
+.geoAna select:focus{
+	outline:0;
+}
 .tool-container .item-list>.tool-item {
   float: left;
   padding: 5px;
@@ -12,21 +39,20 @@
 }
 
 .tool-content .main-title {
-  font-size: 17px;
+  font-size:16px;
 }
 
 .tool-content .main-content .step>.title::before {
-  margin-right: 13px;
+  margin-right:10px;
   border-radius: 50%;
-  padding: 3px 7px 1px 6px;
-  background: #5daddd;
+	background: #5daddd;
   color: #fff;
-  font-size: 143%;
+  font-size:17px;
   position: relative;
-  font-weight: 600;
-  text-align: center
+  font-weight:bold;
+  text-align: center; display:inline-block; height:30px; line-height:30px; width:30px;
 }
-
+.tool-content .main-content .step>.title{ font-weight:bold;}
 .tool-content .main-content .step._1>.title::before {
   content: ' 1 ';
 }
@@ -41,22 +67,21 @@
 
 .tool-content .main-content .step._4>.title::before {
   content: ' 4 ';
-  border-radius: 50%;
-  padding: 3px 7px 1px 6px;
-  background: #5daddd;
-  color: #fff;
-  font-size: 143%;
-  position: relative;
-  font-weight: 600;
-  text-align: center
+}
+
+.title.row{
+  margin: 5px 4px 5px 9px;
 }
 
 .tool-container .item-list>.tool-item>.pic {
   background-color: #E8E8E8;
   display: inline-block;
-  height: 60px;
-  width: 90px;
+  height: 32px;
+  width: 32px;
   border: 1px solid #ccc;
+}
+.tool-container .item-list > .tool-item > .name{
+	display:block; font-size:12px;
 }
 
 .geoAna>.tool-list .tool-category-title::before {
@@ -84,33 +109,31 @@
 }
 
 .tool-content .go-back {
-  float: right;
-  color: #ffffff;
-  background-color: #0085D7;
-  padding: 3px 8px;
-  border-radius: 3px;
-  margin-right: 10px;
+	color: #ffffff;
+  background-color:#5daddd;
+  padding:5px 10px;
+  border-radius:0;
+	border:none; position:absolute; right:7px; top:7px; font-size:12px;
 }
 
-.geoAna input {
-  border-bottom: 0.5px solid #ccc;
+.geoAna input[type='text'] {
+	border:1px solid #cbcbcb; height:32px; padding:0 9px;
 }
 
 .widget .step {
   font-size: 13px;
-  padding: 15px 10px 17px 6px;
-  border-bottom: 1px solid #ccc;
+  padding:10px;
+  border-bottom:1px solid #E7E7E7;
 }
 
 .run.btn{
-  border-radius: 7px;
-  padding: 3px 9px;
+	padding:7px 19px; background:#5daddd; color:#fff; border:none;
 }
 
-.widget.buffer {
-  /* background-color: rgba(102, 170, 81, 0.2) */
+.widget.buffer { padding:7px;
+	/* background-color: rgba(102, 170, 81, 0.2) */
 }
-
+.widget.interpo-point{ padding:7px;}
 .step.error {
   background-color: rgba(170, 81, 81, 0.8)
 }
@@ -128,9 +151,22 @@
 }
 
 .buffer-options-switch {
-  background-color: rgba(31, 172, 197, 0.8)
+  background-color:transparent; font-weight:bold;
 }
 
 .c{
   clear: both;
+}
+.c:after{ content:"."; display:block; height:0; visibility:hidden; clear:both; }
+.geoAna > .tool-list .tool-category-title{ color:#333; background-color:#F8F8F8; border-top:1px solid #DEDEDE; padding:5px 10px; margin-top:-1px;
+}
+.geoAna > .tool-list .tool-category-title::before{ color:#4997D2;
+}
+.geoAna > .tool-content{ position:relative;
+}
+.buffer-type-select > ul > li.active{ background-color:transparent;
+}
+.buffer-options > ul > li.active{ background-color:transparent;
+}
+.geoAna input[type="text"]{ width:100%;
 }

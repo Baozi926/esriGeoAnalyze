@@ -7,7 +7,7 @@
       <div class="title">
         选择包含位置点的图层
       </div>
-      <div class="content">
+      <div class="content mt">
         <select data-dojo-attach-point="layerChooseNode" data-dojo-attach-event='onchange: inputLayerChange'>
         </select>
       </div>
@@ -16,7 +16,7 @@
       <div class="title">
         选择要插入的字段
       </div>
-      <div class="content">
+      <div class="content mt">
         <select data-dojo-attach-point="fieldChooseNode"  data-dojo-attach-event='onchange: choosenFieldChange'>
         
         </select>
@@ -24,16 +24,16 @@
     </div>
     <div class="step _3" data-dojo-attach-point="step_3_node">
       <span class="title">结果图层名称</span>
-      <input data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
-      <select data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
+      <input class="mt mbh" type="text" data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
+      <select class="mth" data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
         <option selected disabled hidden>请选择</option>
         <option value="admin">管理员</option>
       </select>
     </div>
     <div class="step">
         <input class="cbox" checked type="checkbox" data-dojo-attach-point='useCurrentExtent_Node' data-dojo-attach-event='onchange: useCurrentExtentChange'
-        />使用当前地图范围
-        <button class="btn run" data-dojo-attach-event='onclick: runTask'>运行分析</button>
+        />使用当前地图范围<br>
+        <button class="btn run mt" data-dojo-attach-event='onclick: runTask'>运行分析</button>
   
       </div>
 
