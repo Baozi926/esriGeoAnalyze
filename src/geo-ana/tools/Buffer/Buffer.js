@@ -1,9 +1,8 @@
-
 /**
- * @author caihm 
+ * @author caihm
  * @createDate 2018-9-3
- * 
- * 
+ *
+ *
 */
 define([
   'esri/identity/IdentityManager',
@@ -21,8 +20,9 @@ define([
   "esri/layers/FeatureLayer",
   './BufferTask',
   '../ToolBase',
-  '../../arcgisUtil'
-], function (IdentityManager, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, ArrayUtil, FeatureLayer, BufferTask, ToolBase, arcgisUtil) {
+  '../../arcgisUtil',
+  '../../config'
+], function (IdentityManager, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, ArrayUtil, FeatureLayer, BufferTask, ToolBase, arcgisUtil, geoAnaConfig) {
   var widget = declare('caihm.widgets.Buffer', [
     _WidgetBase, _TemplatedMixin, ToolBase
   ], {
@@ -311,12 +311,15 @@ define([
             //将结果图层加载到地图
             var serviceUrl = res.serviceUrl;
             console.log('结果图层url:' + serviceUrl);
+            if (geoAnaConfig.forceHttps) {
+
+              serviceUrl = arcgisUtil.forceUrlToHttps(serviceUrl);
+            }
+
             this
               .mapView
               .map
-              .add(new FeatureLayer({
-                url: serviceUrl + '?token=' + this.user.token
-              }));
+              .add(new FeatureLayer({url: serviceUrl, token: this.user.token}));
 
           } else {
             alert('失败')

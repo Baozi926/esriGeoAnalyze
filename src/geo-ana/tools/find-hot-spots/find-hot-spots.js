@@ -1,13 +1,7 @@
-/**
- * @author caihm
- * @createDate 2018-9-3
- *
-*/
-
 define([
   "esri/layers/FeatureLayer",
+  '../../config',
   'dojo/_base/array',
-  'dojo/promise/all',
   'dojo/dom-construct',
   'dojo/_base/lang',
   'dojo/dom-class',
@@ -19,14 +13,14 @@ define([
   'dojo/_base/declare',
   'dojo/text!./template.html',
   'dojo/_base/array',
-  './interpolation-point-task',
   '../../arcgisUtil',
   '../ToolBase',
-  '../../config'
-], function (FeatureLayer, ArrayUtil, all, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, arrayUtil, interpolationPointTask, arcgisUtil, ToolBase, geoAnaConfig) {
-  var widget = declare('caihm.widgets.interpolation-point', [
+  './find-hot-spots-task' //此处需修改成自己的task
+], function (FeatureLayer, geoAnaConfig, ArrayUtil, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, arrayUtil, arcgisUtil, ToolBase, findHotSpotsTask) {
+  var widget = declare('caihm.widgets.findHotSpots', [
     _WidgetBase, _TemplatedMixin, ToolBase
   ], {
+    templateString: template,
     constructor(options) {
 
       this.mapView = options.mapView;
@@ -35,24 +29,20 @@ define([
       this.analyzeService = options.analyzeService;
       this.portalInfo = options.portalInfo;
     },
-
-    templateString: template,
-
-    data: {
-      currentServicesInfo: []
-    },
-
     startup() {
-      this.getAvailableLayer();
       this.initFolders();
+      this.getAvailableLayers();
+      this.getShapeType(this.clusterShapeTypeNode);
+
       this.useCurrentExtentChange({target: this.useCurrentExtent_Node});
     },
     runTask() {
+
       var state = this.checkParam();
       if (state.valid) {
 
         var tempParm = this.getTransParam();
-        var context;
+        var context = '';
 
         if (tempParm.use_current_extent) {
           context = {
@@ -63,20 +53,17 @@ define([
           lang.mixin(context.extent, this.mapView.extent.toJSON())
         }
 
-        var dfd = new interpolationPointTask().run({
+        var dfd = new findHotSpotsTask().run({
           portalInfo: this.portalInfo,
           analyzeService: this.analyzeService,
           user: this.user,
           portalUrl: this.portalUrl,
-          param: {
-            inputLayer: tempParm.inputLayer,
+          param: lang.mixin(tempParm, {
             exportService: {
               name: tempParm.result_layer_name
             },
-            field: tempParm.field,
-            folderId: tempParm.folderId,
             context: context
-          }
+          })
         });
 
         dfd.then(lang.hitch(this, function (res) {
@@ -99,6 +86,122 @@ define([
           alert(err);
         }))
       }
+    },
+    data: {
+      availableServices: null
+    },
+
+    getShapeType(srcNode) {
+      domConstruct.empty(srcNode);
+      domConstruct.create('option', {
+        selected: true,
+        disabled: true,
+        hidden: true,
+        innerHTML: '请选择'
+      }, srcNode);
+
+      var defaultShapeTypes = [
+        {
+          name: '渔网网格',
+          value: 'Fishnet'
+        }, {
+          name: '六边形网格',
+          value: 'Hexagon'
+        }
+      ];
+      ArrayUtil.forEach(defaultShapeTypes, function (v) {
+        domConstruct.create('option', {
+          innerHTML: v.name,
+          value: v.value
+        }, srcNode);
+      }, this);
+
+    },
+
+    shapeTypeChange(evt) {
+      this.setParam('shapeType', evt.target.value);
+
+    },
+    inputLayerChange(evt) {
+
+      var layerId = evt.target.value;
+      var layer = this
+        .mapView
+        .map
+        .findLayerById(layerId);
+      var value;
+
+      if (layer.sublayers && layer.sublayers.items.length === 1) {
+        value = layer.url + '/0';
+      } else {
+        value = layer.url;
+      }
+
+      this.setParam('inputLayer', value);
+
+      //设置第二步骤的可选参数
+      var avaliableFields = [];
+
+      var info = ArrayUtil.filter(this.data.availableServices, function (v) {
+        return v.layer.id === layerId;
+      }, this)[0].info;
+
+      var fields = info.fields;
+
+      ArrayUtil.forEach(fields, function (v) {
+        if (arcgisUtil.isNumberFieldType(v.type)) {
+          avaliableFields.push(v);
+        }
+      }, this);
+
+      domConstruct.empty(this.clusterAttrNode);
+
+      domConstruct.create('option', {
+        selected: true,
+        innerHTML: '点计数'
+      }, this.clusterAttrNode)
+
+      //创建字段选择option
+      ArrayUtil.forEach(avaliableFields, function (v) {
+        domConstruct.create('option', {
+          innerHTML: v.alias,
+          value: v.name
+        }, this.clusterAttrNode);
+      }, this)
+    },
+
+    clusterAttrChange(evt) {
+
+      this.setParam('analysisField', evt.target.value)
+    },
+    getAvailableLayers() {
+      domConstruct.empty(this.layerChooseNode);
+
+      domConstruct.create('option', {
+        selected: true,
+        disabled: true,
+        hidden: true,
+        innerHTML: '请选择'
+      }, this.layerChooseNode);
+
+      arcgisUtil
+        .getCurrentDisplayPointLayer({mapView: this.mapView, user: this.user})
+        .then(lang.hitch(this, function (res) {
+          this.data.availableServices = res;
+          //为过滤后的结果生成dom
+          ArrayUtil.forEach(res, function (v) {
+            domConstruct.create('option', {
+              value: v.layer.id,
+              innerHTML: v.layer.title
+            }, this.layerChooseNode)
+          }, this);
+        }));
+    },
+    resultNameChange: function (evt) {
+      this.setParam('result_layer_name', evt.target.value)
+    },
+    resultFolderChange: function (evt) {
+      this.setParam('folderId', evt.target.value)
     },
     useCurrentExtentChange: function (evt) {
       this.setParam('use_current_extent', evt.target.checked)
@@ -129,147 +232,12 @@ define([
       }
 
     },
-
-    resultNameChange: function (evt) {
-      this.setParam('result_layer_name', evt.target.value)
-    },
-    resultFolderChange: function (evt) {
-      this.setParam('folderId', evt.target.value)
-    },
-    choosenFieldChange(evt) {
-      this.setParam('field', evt.target.value)
-
-    },
-
-    inputLayerChange(evt) {
-      var layerId = evt.target.value;
-      var layer = this
-        .mapView
-        .map
-        .findLayerById(layerId);
-      var value;
-
-      if (layer.sublayers && layer.sublayers.items.length === 1) {
-        value = layer.url + '/0';
-      } else {
-        value = layer.url;
-      }
-
-      this.setParam('inputLayer', value)
-
-      var avaliableFields = [];
-
-      var info = this.getServicesInfo({id: layerId});
-
-      var fields = info.fields;
-
-      ArrayUtil.forEach(fields, function (v) {
-        if (arcgisUtil.isNumberFieldType(v.type)) {
-          avaliableFields.push(v);
-        }
-      }, this);
-
-      domConstruct.empty(this.fieldChooseNode);
-
-      domConstruct.create('option', {
-        selected: true,
-        disabled: true,
-        hidden: true,
-        innerHTML: '请选择'
-      }, this.fieldChooseNode)
-      //创建字段选择option
-      ArrayUtil.forEach(avaliableFields, function (v) {
-        domConstruct.create('option', {
-          innerHTML: v.alias,
-          value: v.name
-        }, this.fieldChooseNode);
-      }, this)
-
-    },
-
-    getServicesInfo(layer) {
-      var filter = ArrayUtil.filter(this.currentServicesInfo, function (v) {
-        return layer.id === v.layer.id;
-      }, this);
-
-      if (filter.length === 1) {
-        return filter[0].info
-      }
-
-    },
-
-    getAvailableLayer() {
-
-      //获取服务
-      var services = ArrayUtil.filter(this.mapView.map.allLayers.items, function (v) {
-        //排除底图
-        var isBaseMap = ArrayUtil.some(this.mapView.map.basemap.baseLayers.items, function (vv) {
-          return vv.id === v.id
-        }, this);
-        //只针对加载的服务
-        if (v.url && !isBaseMap) {
-          //如果mapServer只有一个图层，则按照featureLayer来处理
-          if (v.sublayers) {
-            return v.sublayers.items.length === 1
-          } else {
-            return true
-          }
-
-        }
-      }, this);
-
-      domConstruct.empty(this.layerChooseNode);
-
-      domConstruct.create('option', {
-        selected: true,
-        disabled: true,
-        hidden: true,
-        innerHTML: '请选择'
-      }, this.layerChooseNode);
-
-      var filterServices = []
-
-      var promises = ArrayUtil.map(services, function (v, k) {
-        var url;
-        if (v.sublayers && v.sublayers.items.length === 1) {
-          url = v.url + '/0';
-        } else {
-          url = v.url
-        }
-        return arcgisUtil.getLayerInfo(url, this.user.token);
-      }, this);
-
-      all(promises).then(lang.hitch(this, function (resArr) {
-        this.currentServicesInfo = [];
-
-        ArrayUtil.forEach(resArr, function (v, k) {
-          if (v.geometryType == 'esriGeometryPoint') {
-            filterServices.push(services[k]);
-
-            this
-              .currentServicesInfo
-              .push({layer: services[k], info: v})
-          }
-        }, this);
-
-        //为过滤后的结果生成dom
-        ArrayUtil.forEach(filterServices, function (v) {
-          domConstruct.create('option', {
-            value: v.id,
-            innerHTML: v.title
-          }, this.layerChooseNode)
-        }, this);
-
-      }));
-
-    },
-
     initParams: function () {
 
       return [
         {
-          srcNode: this.step_1_node,
           name: '步骤一',
+          srcNode: this.step_1_node,
           params: {
             inputLayer: {
               value: null,
@@ -284,10 +252,11 @@ define([
             }
           }
         }, {
+          name: '步骤二', //
+
           srcNode: this.step_2_node,
-          name: '步骤二',
           params: {
-            field: {
+            shapeType: {
               rule: [
                 {
                   msg: '不能为空',
@@ -296,10 +265,25 @@ define([
                   }
                 }
               ]
+            },
+            analysisField: {
+              value: null,
+              rule: [
+                {
+                  msg: '',
+                  valid: function (value) {
+                    return true
+                  }
+                }
+              ]
             }
           }
         }, {
           srcNode: this.step_3_node,
+          name: '步骤三',
+          params: {}
+        }, {
+          srcNode: this.step_4_node,
           name: '步骤三',
           params: {
             use_current_extent: {},

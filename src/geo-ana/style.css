@@ -15,7 +15,7 @@
   font-size: 17px;
 }
 
-.tool-content .main-content .step .title::before {
+.tool-content .main-content .step>.title::before {
   margin-right: 13px;
   border-radius: 50%;
   padding: 3px 7px 1px 6px;
@@ -27,19 +27,19 @@
   text-align: center
 }
 
-.tool-content .main-content .step._1 .title::before {
+.tool-content .main-content .step._1>.title::before {
   content: ' 1 ';
 }
 
-.tool-content .main-content .step._2 .title::before {
+.tool-content .main-content .step._2>.title::before {
   content: ' 2 ';
 }
 
-.tool-content .main-content .step._3 .title::before {
+.tool-content .main-content .step._3>.title::before {
   content: ' 3 ';
 }
 
-.tool-content .main-content .step._4 .title::before {
+.tool-content .main-content .step._4>.title::before {
   content: ' 4 ';
   border-radius: 50%;
   padding: 3px 7px 1px 6px;

@@ -17,20 +17,33 @@ define([
 
       var dfd = new Deferred();
       arcgisUtil
-        .CreateServiceWithValidation(param)
+        .createServiceWithValidation(param)
         .then(lang.hitch(this, function (portalItem) {
           this
             .submitJob(lang.mixin(param, {portalItem: portalItem}))
             .then(lang.hitch(this, function (res) {
-              var event = arcgisUtil.watchJobj(lang.mixin(param, {jobId: res.jobId}));
+              var event = arcgisUtil.watchJob(lang.mixin(param, {
+                jobId: res.jobId
+              }, {analyzeToolName: 'InterpolatePoints'}));
 
               event.on('success', lang.hitch(this, function (res) {
+                console.log(res)
                 debugger
                 dfd.resolve({success: true, serviceUrl: param.portalItem.url});
               }));
 
               event.on('error', lang.hitch(this, function (res) {
-                alert(res);
+                debugger;
+                var msg = '';
+
+                ArrayUtil.forEach(res.messages, function (v, k) {
+                  msg += k + ': ' + v.description + '\n';
+
+                }, this);
+
+                arcgisUtil.removeServicefromPortal(param);
+                console.log(msg);
+                dfd.reject(msg);
               }));
 
               event.on('msg', lang.hitch(this, function (res) {
@@ -38,6 +51,7 @@ define([
               }));
 
             }), lang.hitch(this, function (err) {
+              arcgisUtil.removeServicefromPortal(param);
               dfd.reject(err);
 
             }));
@@ -50,7 +64,7 @@ define([
       return dfd;
     },
     submitJob(param) {
-      //设置空间分析工具的名称，在监控gp执行时需用到
+      //
 
       var dfd = new Deferred();
       var url = param.analyzeService + '/InterpolatePoints/submitJob';

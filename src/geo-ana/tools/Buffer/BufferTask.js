@@ -238,15 +238,16 @@ define([
             method: 'get'
           })
           .then(lang.hitch(this, function (res) {
+            console.log(res.data);
             event.emit('msg', res.data)
             if (res.data.jobStatus === 'esriJobFailed') {
               window.clearInterval(interval)
               this._jobDone = true;
-              event.emit('error')
+              event.emit('error',res.data)
             } else if (res.data.jobStatus === 'esriJobSucceeded') {
               this._jobDone = true;
               window.clearInterval(interval)
-              event.emit('success')
+              event.emit('success',res.data)
             }
 
           }), function (err) {

@@ -11,8 +11,9 @@ define([
   'dojo/_base/array',
   '../../arcgisUtil'
 ], function (Evented, all, Deferred, lang, domClass, domStyle, esriConfig, esriRequest, declare, ArrayUtil, arcgisUtil) {
-  var widget = declare('caihm.widgets.DemoTask', [], {
+  var widget = declare('caihm.widgets.findHotSpots', [], {
     run(param) {
+      
       var dfd = new Deferred();
       arcgisUtil
         .createServiceWithValidation(param)
@@ -22,21 +23,20 @@ define([
             .then(lang.hitch(this, function (res) {
               var event = arcgisUtil.watchJob(lang.mixin(param, {
                 jobId: res.jobId
-              }, {analyzeToolName: 'InterpolatePoints'}));
+              }, {analyzeToolName: 'FindHotSpots'}));
 
               event.on('success', lang.hitch(this, function (res) {
                 console.log(res)
-                debugger
+               
                 dfd.resolve({success: true, serviceUrl: param.portalItem.url});
               }));
 
               event.on('error', lang.hitch(this, function (res) {
-                debugger;
+             
                 var msg = '';
 
                 ArrayUtil.forEach(res.messages, function (v, k) {
                   msg += k + ': ' + v.description + '\n';
-
                 }, this);
 
                 arcgisUtil.removeServicefromPortal(param);
@@ -47,6 +47,11 @@ define([
               event.on('msg', lang.hitch(this, function (res) {
                 console.log(res)
               }));
+
+              event.on('internet-error', lang.hitch(this, function (err) {
+                arcgisUtil.removeServicefromPortal(param);
+                dfd.reject(err);
+              }))
 
             }), lang.hitch(this, function (err) {
               arcgisUtil.removeServicefromPortal(param);
@@ -61,8 +66,48 @@ define([
 
       return dfd;
     },
-    submitJob(){
+    submitJob(param) {
+      //设置空间分析工具的名称，在监控gp执行时需用到
 
+      var dfd = new Deferred();
+      var url = param.analyzeService + '/FindHotSpots/submitJob';
+      var analysisLayer = {
+        "url": param.param.inputLayer
+      }
+      var OutputName = {
+        "serviceProperties": {
+          "name": param.param.exportService.name,
+          "serviceUrl": param.portalItem.url
+        },
+        "itemProperties": {
+          "itemId": param.portalItem.url,
+          "folderId": param.param.folderId
+        }
+      }
+
+      var queryParam = {
+        f: 'json',
+        analysisLayer: JSON.stringify(analysisLayer),
+        analysisField:param.param.analysisField,
+        shapeType: 'fishnet',
+        returnProcessInfo: true,
+        OutputName: JSON.stringify(OutputName),
+        context: JSON.stringify(param.param.context),
+        token: param.user.token
+      }
+
+      esriRequest(url, {
+          query: queryParam,
+          method: 'post'
+        }).then(lang.hitch(this, function (res) {
+        param.jobId = res.data.jobId;
+        console.log('jobId:' + param.jobId);
+        dfd.resolve(res.data);
+      }), function (err) {
+        dfd.reject(err);
+      });
+
+      return dfd;
     }
   });
 

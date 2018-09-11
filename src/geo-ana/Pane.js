@@ -46,21 +46,21 @@ define([
       this.render();
 
       //每当图层变化时重新加载空间分析组件
-      this
-        .mapView
-        .on('layerview-create', lang.hitch(this, function () {
-          if (this.data.currentToolParam) {
-            this.reloadTool();
-          }
-        }));
+      // this
+      //   .mapView
+      //   .on('layerview-create', lang.hitch(this, function () {
+      //     if (this.data.currentToolParam) {
+      //       this.reloadTool();
+      //     }
+      //   }));
 
-      this
-        .mapView
-        .on('layerview-destroy', lang.hitch(this, function () {
-          if (this.data.currentToolParam) {
-            this.reloadTool();
-          }
-        }));
+      // this
+      //   .mapView
+      //   .on('layerview-destroy', lang.hitch(this, function () {
+      //     if (this.data.currentToolParam) {
+      //       this.reloadTool();
+      //     }
+      //   }));
 
     },
     data: {

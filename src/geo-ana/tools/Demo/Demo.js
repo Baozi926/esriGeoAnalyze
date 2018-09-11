@@ -1,4 +1,6 @@
 define([
+  "esri/layers/FeatureLayer",
+  '../../config',
   'dojo/_base/array',
   'dojo/dom-construct',
   'dojo/_base/lang',
@@ -14,14 +16,23 @@ define([
   '../../arcgisUtil',
   '../ToolBase',
   './DemoTask' //此处需修改成自己的task
-], function (ArrayUtil, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, arrayUtil, arcgisUtil, ToolBase, DemoTask) {
+], function (FeatureLayer,geoAnaConfig,ArrayUtil, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, arrayUtil, arcgisUtil, ToolBase, DemoTask) {
   var widget = declare('caihm.widgets.Buffer', [
     _WidgetBase, _TemplatedMixin, ToolBase
   ], {
     templateString: template,
+    constructor(options) {
+
+      this.mapView = options.mapView;
+      this.portalUrl = options.portalUrl;
+      this.user = options.user;
+      this.analyzeService = options.analyzeService;
+      this.portalInfo = options.portalInfo;
+    },
 
     startup() {
       this.initFolders();
+      this.useCurrentExtentChange({target: this.useCurrentExtent_Node});
     },
     runTask() {
       var state = this.checkParam();
@@ -56,7 +67,7 @@ define([
           .forEach(this.user.info.folders, function (v) {
             domConstruct.create('option', {
               value: v.id,
-              innerHTML: v.name
+              innerHTML: v.title
             }, this.resultFolderNode)
           }, this);
       }
@@ -69,7 +80,7 @@ define([
           name: '步骤一',
           srcNode:null,
           params: {
-            a: {
+            inputLayer: {
               value: null,
               rule: [
                 {

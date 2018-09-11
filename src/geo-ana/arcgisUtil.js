@@ -1,6 +1,11 @@
 define([
-  'dojo/_base/array', 'esri/request', 'dojo/_base/Deferred', 'dojo/_base/lang', 'dojo/promise/all'
-], function (ArrayUtil, esriRequest, Deferred, lang, all) {
+  'dojo/_base/array',
+  'esri/request',
+  'dojo/_base/Deferred',
+  'dojo/_base/lang',
+  'dojo/promise/all',
+  'dojo/Evented'
+], function (ArrayUtil, esriRequest, Deferred, lang, all, Evented) {
 
   var HAS_SPATIAL_ANALYSIS = 'premium:user:spatialanalysis'
 
@@ -36,6 +41,12 @@ define([
         value: 'Yards'
       }
     ],
+    //将http的url强制转换为https
+    forceUrlToHttps(serviceUrl) {
+      if (serviceUrl.indexOf('https://') !== 0 && serviceUrl.indexOf('http://') === 0) {
+        return serviceUrl.replace('http://', 'https://');
+      }
+    },
 
     isNumberFieldType(field) {
       return ArrayUtil.some(NUMBER_FIELD_TYPES, function (v) {
@@ -103,7 +114,7 @@ define([
 
     },
 
-    CreateServiceWithValidation(_param) {
+    createServiceWithValidation(_param) {
 
       var dfd = new Deferred();
 
@@ -312,6 +323,8 @@ define([
         token: param.user.token
       }
 
+      console.log('watchUrl:' + url);
+
       var interval = setInterval(function () {
         esriRequest(url, {
             query: queryParam,
@@ -321,26 +334,106 @@ define([
 
             if (res.data.jobStatus === 'esriJobFailed') {
 
-              interval.clearInterval(interval)
+              window.clearInterval(interval);
 
-              event.emit('error')
+              event.emit('error', res.data);
             } else if (res.data.jobStatus === 'esriJobSucceeded') {
 
-              interval.clearInterval(interval)
+              window.clearInterval(interval);
 
-              event.emit('success')
+              event.emit('success', res.data);
             } else {
               event.emit('msg', res.data);
             }
 
           }), function (err) {
             //若有错误则销毁interval
-            interval.clearInterval(interval)
-            throw new Error('gp 执行错误:' + err);
+            window.clearInterval(interval)
+            event.emit('internet-error', err);
+            console.log(err);
           });
       }, 2000)
 
       return event;
+    },
+    //删除创建的图层
+    removeServicefromPortal: function (param) {
+
+      var dfd = new Deferred();
+
+      if (param.portalItem && param.portalItem.id) {
+
+        var url = param.portalUrl + '/sharing/rest/content/users/' + param.user.username + '/items/' + param.portalItem.id + '/delete'
+        esriRequest(url, {
+          query: {
+            token: param.user.token,
+            f: 'json'
+          },
+            method: 'post'
+          })
+          .then(lang.hitch(this, function (res) {
+            if (res.data.success) {
+              dfd.resolve(res.data);
+            } else {
+              dfd.reject(res.data);
+            }
+          }), function (err) {
+            dfd.reject(err);
+          })
+
+        return dfd;
+      } else {
+        throw new Error('itemId is null');
+      }
+
+    },
+
+    getCurrentDisplayPointLayer(param) {
+
+      var dfd = new Deferred();
+      //获取服务
+      var services = ArrayUtil.filter(param.mapView.map.allLayers.items, function (v) {
+        //排除底图
+        var isBaseMap = ArrayUtil.some(param.mapView.map.basemap.baseLayers.items, function (vv) {
+          return vv.id === v.id
+        });
+        //只针对加载的服务
+        if (v.url && !isBaseMap) {
+          //如果mapServer只有一个图层，则按照featureLayer来处理
+          if (v.sublayers) {
+            return v.sublayers.items.length === 1
+          } else {
+            return true
+          }
+
+        }
+      });
+
+      var filterServices = []
+
+      var promises = ArrayUtil.map(services, function (v, k) {
+        var url;
+        if (v.sublayers && v.sublayers.items.length === 1) {
+          url = v.url + '/0';
+        } else {
+          url = v.url
+        }
+        return instance.getLayerInfo(url, param.user.token);
+      });
+
+      all(promises).then(function (resArr) {
+        ArrayUtil
+          .forEach(resArr, function (v, k) {
+            if (v.geometryType == 'esriGeometryPoint') {
+              filterServices.push({layer: services[k], info: v});
+            }
+          });
+
+        dfd.resolve(filterServices);
+
+      });
+
+      return dfd;
     },
 
     getPortalInfo(param) {
@@ -354,7 +447,7 @@ define([
           query: {
             f: 'json',
             token: token,
-            culture:'zh-cn'
+            culture: 'zh-cn'
           }
         }).then(lang.hitch(this, function (res) {
         instance.portalInfo = res.data;
