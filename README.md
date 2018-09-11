@@ -5,8 +5,13 @@ geo Analyze for arcgis javascript 4.0+
 因此，我用4.8的api实现了部分空间分析工具，欢迎感兴趣的小伙伴共同参与完善。
 
 
-部署步骤
-1.放到tomcat下拉，然后你需要一个安装了arcgis portal、arcgis server、arcgis datastore 的环境，记得验证datastore是否安装成功哦。
-2.更改根目录下的dojoConfig.js，搞arcgis api 开发的小伙伴应该都懂吧
-3.在index.html中更改proxy.jsp为你的部署路径
-4.在index.html中更换geoAna这个类的参数，token，username，portalUrl,这三个参数 ，（获取token的方式：在网页中登录portal，然后再开发者工具里面找个带token的请求，复制下来）
+# 部署步骤
+1. 放到tomcat下拉，然后你需要一个安装了arcgis portal、arcgis server、arcgis datastore 的环境，记得验证datastore是否安装成功哦。
+2. 更改根目录下的dojoConfig.js，搞arcgis api 开发的小伙伴应该都懂吧
+3. 在index.html中更改proxy.jsp为你的部署路径。(Pane.js里面有个REQUIRE_URL_PERFIX变量，如果你的项目结构发生改变的话，可能需要修改此变量)
+4. 在index.html中更换geoAna这个类的参数，token，username，portalUrl,这三个参数 ，（获取token的方式：在网页中登录portal，然后再开发者工具里面找个带token的请求，复制下来）
+
+# 目前完成的工具 
++ 缓冲区分析
++ 热点分析
++ 点差值
