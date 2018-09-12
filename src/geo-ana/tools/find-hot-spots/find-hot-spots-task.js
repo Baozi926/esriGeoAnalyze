@@ -89,6 +89,8 @@ define([
         f: 'json',
         analysisLayer: JSON.stringify(analysisLayer),
         analysisField:param.param.analysisField,
+        boundingPolygonLayer:param.param.boundingPolygonLayer,
+        aggregationPolygonLayer:param.param.aggregationPolygonLayer,
         shapeType: 'fishnet',
         returnProcessInfo: true,
         OutputName: JSON.stringify(OutputName),
