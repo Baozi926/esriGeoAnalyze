@@ -13,7 +13,14 @@ define([
    *
   */
   var widget = declare('caihm.geoAna.baseTool', [], {
-
+    onAnalyzeStart() {
+      this.runButtonNode.innerHTML = '<i class="fa fa-refresh fa-spin fa-fw"></i> 计算中...'
+      this.runButtonNode.disabled = true
+    },
+    onAnalyzeEnd() {
+      this.runButtonNode.innerHTML = '运行分析'
+      this.runButtonNode.disabled = false
+    },
     postCreate() {
       if (this.initParams && lang.isFunction(this.initParams)) {
         this._params = this.initParams();
@@ -43,14 +50,18 @@ define([
      * 通过参数名，设置参数
      *
     */
-    setParam (name, value) {
+    setParam(name, value) {
+      if (!name) {
+        throw new Error('name can not be none')
+      }
+
       var flag = false;
       for (var i = 0; i < this._params.length; i++) {
         var step = this._params[i];
         for (var key in step.params) {
           if (key === name) {
             step.params[name].value = value
-            console.log(name,value);
+            console.log(name, value);
             flag = true;
             break;
           }
@@ -65,7 +76,12 @@ define([
      * @description 根据参数名称获取参数
      *
      */
-    getParam (name) {
+    getParam(name) {
+
+      if (!name) {
+        throw new Error('name  can not be none')
+      }
+
       for (var i = 0; i < this._params.length; i++) {
         var step = this._params[i];
         for (var key in step.params) {
@@ -82,7 +98,7 @@ define([
      * @description 检查参数是否有效
      *
      */
-    checkParam () {
+    checkParam() {
       var allValid = true;
       arrayUtil.forEach(this._params, function (div) {
         domClass.remove(div.srcNode, 'error');

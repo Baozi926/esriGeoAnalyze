@@ -50,7 +50,7 @@ define([
     runTask() {
       var state = this.checkParam();
       if (state.valid) {
-
+        this.onAnalyzeStart();
         var tempParm = this.getTransParam();
         var context;
 
@@ -91,7 +91,7 @@ define([
               .mapView
               .map
               .add(new FeatureLayer({url: serviceUrl, token: this.user.token}));
-
+              this.onAnalyzeEnd();
           } else {
             alert('失败')
           }

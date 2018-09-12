@@ -21,6 +21,12 @@ define([
     this.portalUrl = options.portalUrl;
     this.mapView = options.mapView;
 
+    if (window.Onemap && window.Onemap.SystemInfo) {
+      this.user.token = window.Onemap.SystemInfo.token;
+      this.user.username = window.Onemap.userName;
+      this.user.password = window.Onemap.passWord;
+    }
+
     this.init({srcNodeId: options.srcNodeId});
   }
 

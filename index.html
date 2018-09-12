@@ -31,7 +31,7 @@
       "dojo/domReady!"
     ], function (Map, MapView, GeoAna, esriConfig, FeatureLayer, MapImageLayer) {
 
-      var TOKEN = '51IUr6UU56QlbATE1cYuKtaNt9DkZrA_tUzsAjCfkB-pCIw7zXMB-2IP37YpJLR8nhzQ7hVa_aSyoxekwKj9BZBrAlcmPU8T72ZLJ5mAK4Yzeh6TUSb596ftR4th8gck0ZOu32ONhGIa2zdX0NTccWv6soNYTmwOiNjfLPPbwUriDlkkNbknN-TvZV87mYB4uaoXLXyWADRlCza6r9sG4Q..'
+      var TOKEN = 'mtx_kDRaXIgJjWdxl-2oFb44Sp90eV9BT5Fdzin-4P0rQsT3XDPavBmJiaiSpVy0zhdbTvcR_2ukDKXw2hs7vopAUhVRC9bCsOg7drpBnZOSxHObH1htcsONvl0ee-73Amo6TRo0BGJfNbcMTnZrfaqzGrrdicg1rVWnYeEyWYg.'
 
       esriConfig.request.proxyUrl = './src/proxy/proxy.jsp';
       esriConfig.request.forceProxy = true;
@@ -51,10 +51,18 @@
         center: [15, 65]  // Sets center point of view using longitude,latitude
       });
 
+      map.add(new FeatureLayer({
+        url: 'https://map.xyzhgt.com/arcgis/rest/services/Hosted/testfeature/FeatureServer',
+        token: TOKEN
+      }))//
+
       map.add(new MapImageLayer({
         url: 'https://map.xyzhgt.com/arcgis/rest/services/test/testPoint/MapServer',
         token: TOKEN
       }))//
+
+
+
 
 
 

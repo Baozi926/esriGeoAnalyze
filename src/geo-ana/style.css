@@ -42,6 +42,10 @@ ul,li{list-style:none; padding:0; margin:0;}
   font-size:16px;
 }
 
+.hide{
+  display: none !important;
+}
+
 .tool-content .main-content .step>.title::before {
   margin-right:10px;
   border-radius: 50%;

@@ -14,7 +14,7 @@
     </div>
     <div class="step _2" data-dojo-attach-point="step_2_node">
       <div class="title">
-        选择要插入的字段
+        选择差值计算的字段
       </div>
       <div class="content mt">
         <select data-dojo-attach-point="fieldChooseNode"  data-dojo-attach-event='onchange: choosenFieldChange'>
@@ -33,7 +33,7 @@
     <div class="step">
         <input class="cbox" checked type="checkbox" data-dojo-attach-point='useCurrentExtent_Node' data-dojo-attach-event='onchange: useCurrentExtentChange'
         />使用当前地图范围<br>
-        <button class="btn run mt" data-dojo-attach-event='onclick: runTask'>运行分析</button>
+        <button data-dojo-attach-point="runButtonNode" class="btn run mt" data-dojo-attach-event='onclick: runTask'>运行分析</button>
   
       </div>
 

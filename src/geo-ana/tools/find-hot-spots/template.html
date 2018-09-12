@@ -4,7 +4,7 @@
     <span class="text">热点分析</span>
   </div>
   <div class="main-content">
-    <div class="step _1" data-dojo-attach-point="step_1_node" >
+    <div class="step _1" data-dojo-attach-point="step_1_node">
       <span class="title">选择需要计算的点图层</span>
       <div class="content">
         <select class="mt" data-dojo-attach-point="layerChooseNode" data-dojo-attach-event='onchange: inputLayerChange'>
@@ -15,14 +15,16 @@
     <div class="step _2" data-dojo-attach-point="step_2_node">
       <span class="title">设置聚类方式</span>
       <div class="content">
-        <select class="mt" class="row" data-dojo-attach-point="clusterAttrNode" data-dojo-attach-event="onchange:clusterAttrChange">
+        <select class="mt row" data-dojo-attach-point="clusterAttrNode" data-dojo-attach-event="onchange:clusterAttrChange">
         </select>
-        <div class="row title">计算某区域内的点数</div>
-        <select class="row" data-dojo-attach-point="clusterShapeTypeNode" data-dojo-attach-event="onchange:shapeTypeChange">
-        </select>
-        <div class="row title">确定哪里可以出现点</div>
-        <select class="row" data-dojo-attach-point="clusterAreaNode">
-        </select>
+        <div data-dojo-attach-point="clusterAttrSubAttrNode">
+          <div class="row title">计算某区域内的点数</div>
+          <select class="row" data-dojo-attach-point="clusterShapeTypeNode" data-dojo-attach-event="onchange:shapeTypeChange">
+          </select>
+          <div class="row title">确定哪里可以出现点</div>
+          <select class="row" data-dojo-attach-point="clusterAreaNode" data-dojo-attach-event="onchange:clusterAreaChange">
+          </select>
+        </div>
       </div>
 
     </div>
@@ -31,6 +33,8 @@
     <div class="step _3" data-dojo-attach-point="step_3_node">
       <span class="title">除数（可选）</span>
       <div class="content">
+        <select class="row mt" data-dojo-attach-point="dividedFieldsNode" data-dojo-attach-event="onchange:onDividedFieldChange">
+        </select>
       </div>
     </div>
 
@@ -44,7 +48,7 @@
     </div>
     <div class="step">
       <input class="cbox" checked type="checkbox" data-dojo-attach-point='useCurrentExtent_Node' data-dojo-attach-event='onchange: useCurrentExtentChange' />使用当前地图范围
-      <button class="btn run" data-dojo-attach-event='onclick: runTask'>运行分析</button>
+      <button data-dojo-attach-point="runButtonNode" class="btn run" data-dojo-attach-event='onclick: runTask'>运行分析</button>
 
     </div>
   </div>

@@ -40,7 +40,7 @@ define([
 
       var state = this.checkParam();
       if (state.valid) {
-
+        this.onAnalyzeStart();
         var tempParm = this.getTransParam();
         var context = '';
 
@@ -53,6 +53,28 @@ define([
           lang.mixin(context.extent, this.mapView.extent.toJSON())
         }
 
+        var extra = {}
+        if (this.getParam('clusterArea')) {
+          var layer = this
+            .mapView
+            .map
+            .findLayerById(this.getParam('clusterArea'))
+          if (this.getParam('analysisField')) {
+            extra = {
+              boundingPolygonLayer: {
+                url: layer.url
+              }
+            }
+
+          } else {
+            extra = {
+              aggregationPolygonLayer: {
+                url: layer.url
+              }
+            }
+          }
+        }
+
         var dfd = new findHotSpotsTask().run({
           portalInfo: this.portalInfo,
           analyzeService: this.analyzeService,
@@ -63,7 +85,7 @@ define([
               name: tempParm.result_layer_name
             },
             context: context
-          })
+          }, extra)
         });
 
         dfd.then(lang.hitch(this, function (res) {
@@ -78,7 +100,7 @@ define([
               .mapView
               .map
               .add(new FeatureLayer({url: serviceUrl, token: this.user.token}));
-
+            this.onAnalyzeEnd();
           } else {
             alert('失败')
           }
@@ -88,7 +110,8 @@ define([
       }
     },
     data: {
-      availableServices: null
+      availableServices: null,
+      inputLayer: null
     },
 
     getShapeType(srcNode) {
@@ -139,12 +162,24 @@ define([
 
       this.setParam('inputLayer', value);
 
+      //重置analysisField
+      this.setParam('analysisField', '');
+
       //设置第二步骤的可选参数
       var avaliableFields = [];
 
-      var info = ArrayUtil.filter(this.data.availableServices, function (v) {
+      var layer = ArrayUtil.filter(this.data.availableServices, function (v) {
         return v.layer.id === layerId;
-      }, this)[0].info;
+      }, this)[0];
+
+      this.data.inputLayer = layer;
+
+      var info;
+      if (layer.layer.type === 'feature') {
+        info = layer.layer
+      } else {
+        info = layer.info;
+      }
 
       var fields = info.fields;
 
@@ -156,23 +191,112 @@ define([
 
       domConstruct.empty(this.clusterAttrNode);
 
-      domConstruct.create('option', {
-        selected: true,
-        innerHTML: '点计数'
-      }, this.clusterAttrNode)
+      if (arcgisUtil.isPointLayer(info.geometryType)) {
+        domConstruct.create('option', {
+          selected: true,
+          value: '',
+          innerHTML: '点计数'
+        }, this.clusterAttrNode)
+      } else {
+        domConstruct.create('option', {
+          selected: true,
+          disabled: true,
+          hidden: true,
+          innerHTML: '请选择'
+        }, this.clusterAttrNode)
+      }
 
       //创建字段选择option
-      ArrayUtil.forEach(avaliableFields, function (v) {
+      ArrayUtil
+        .forEach(avaliableFields, function (v) {
+          domConstruct.create('option', {
+            innerHTML: v.alias,
+            value: v.name
+          }, this.clusterAttrNode);
+        }, this)
+
+      this.clusterAttrChange({target: this.clusterAttrNode})
+
+    },
+
+    onDividedFieldChange(evt) {
+
+      var value = evt.target.value;
+      this.setParam('divideByField', value)
+
+    },
+
+    getDividedFields() {
+
+      var srcNode = this.dividedFieldsNode;
+      domConstruct.empty(srcNode);
+
+      var layer = this.data.inputLayer;
+
+      if (!layer) {
+        return;
+      }
+
+      var info;
+      if (layer.layer.type === 'feature') {
+        info = layer.layer
+      } else {
+        info = layer.info;
+      }
+      var fields = info.fields;
+
+      var avaliableFields = [];
+
+      ArrayUtil.forEach(fields, function (v) {
+        if (arcgisUtil.isNumberFieldType(v.type)) {
+          avaliableFields.push(v);
+        }
+      }, this);
+
+      domConstruct.create('option', {
+        selected: true,
+        disabled: true,
+        hidden: true,
+        innerHTML: '请选择'
+      }, srcNode);
+
+      //如果是按属性计算则可以有被除属性
+      if (this.getParam('analysisField')) {
+        ArrayUtil
+          .forEach(avaliableFields, function (v) {
+            domConstruct.create('option', {
+              innerHTML: v.alias,
+              value: v.name
+            }, srcNode);
+          }, this)
+      } else {
         domConstruct.create('option', {
-          innerHTML: v.alias,
-          value: v.name
-        }, this.clusterAttrNode);
-      }, this)
+          value: '',
+          innerHTML: '无'
+        }, srcNode);
+      }
+    },
+
+    clusterAreaChange(evt) {
+      var value = evt.target.value;
+      this.setParam('clusterArea', value);
+
     },
 
     clusterAttrChange(evt) {
 
       this.setParam('analysisField', evt.target.value)
+
+      if (this.getParam('analysisField')) {
+        domClass.add(this.clusterAttrSubAttrNode, 'hide');
+        this.setParam('shapeType', '');
+        this.setParam('clusterArea', '');
+      } else {
+        domClass.remove(this.clusterAttrSubAttrNode, 'hide');
+      }
+      this.setParam('divideByField', null);
+
+      this.getDividedFields();
     },
     getAvailableLayers() {
       domConstruct.empty(this.layerChooseNode);
@@ -184,9 +308,22 @@ define([
         innerHTML: '请选择'
       }, this.layerChooseNode);
 
+      domConstruct.create('option', {
+        selected: true,
+        disabled: true,
+        hidden: true,
+        innerHTML: '请选择'
+      }, this.clusterAreaNode);
+
+      domConstruct.create('option', {
+        value: '',
+        innerHTML: '无'
+      }, this.clusterAreaNode)
+
       arcgisUtil
-        .getCurrentDisplayPointLayer({mapView: this.mapView, user: this.user})
+        .getCurrentDisplayLayerWithInfo({mapView: this.mapView, user: this.user})
         .then(lang.hitch(this, function (res) {
+
           this.data.availableServices = res;
           //为过滤后的结果生成dom
           ArrayUtil.forEach(res, function (v) {
@@ -195,6 +332,16 @@ define([
               innerHTML: v.layer.title
             }, this.layerChooseNode)
           }, this);
+
+          ArrayUtil.forEach(res, function (v) {
+            if (!arcgisUtil.isPointLayer(v.info.geometryType)) {
+              domConstruct.create('option', {
+                value: v.layer.id,
+                innerHTML: v.layer.title
+              }, this.clusterAreaNode)
+            }
+          }, this);
+
         }));
     },
     resultNameChange: function (evt) {
@@ -233,6 +380,7 @@ define([
 
     },
     initParams: function () {
+      var that = this;
 
       return [
         {
@@ -261,7 +409,13 @@ define([
                 {
                   msg: '不能为空',
                   valid: function (value) {
-                    return value != null && value != ''
+                    //如果按照属性计算，就不需要
+                    if (that.getParam('analysisField')) {
+                      return true
+                    } else {
+                      return value != null && value != ''
+                    }
+
                   }
                 }
               ]
@@ -276,12 +430,15 @@ define([
                   }
                 }
               ]
-            }
+            },
+            clusterArea: {}
           }
         }, {
           srcNode: this.step_3_node,
           name: '步骤三',
-          params: {}
+          params: {
+            divideByField: {}
+          }
         }, {
           srcNode: this.step_4_node,
           name: '步骤三',

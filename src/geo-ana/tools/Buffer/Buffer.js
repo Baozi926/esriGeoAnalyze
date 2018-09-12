@@ -62,7 +62,8 @@ define([
       this.getAvailableLayers();
       this.initDisatanceUnits();
       this.initFolders();
-
+      this.onAnalyzeStart();
+      this.onAnalyzeEnd();
     },
     initFolders() {
 
@@ -275,6 +276,7 @@ define([
 
     //进行buffer操作
     _doBuffer: function (param) {
+      this.onAnalyzeStart();
       var bufferTask = new BufferTask();
       var context = {}
       if (this.getParam('use_current_extent')) {
@@ -320,6 +322,7 @@ define([
               .mapView
               .map
               .add(new FeatureLayer({url: serviceUrl, token: this.user.token}));
+            this.onAnalyzeEnd();
 
           } else {
             alert('失败')

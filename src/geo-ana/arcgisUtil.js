@@ -13,7 +13,7 @@ define([
   var intervalStore = {};
 
   //待完善
-  var NUMBER_FIELD_TYPES = ['esriFieldTypeDouble', 'esriFieldTypeSmallInteger', 'esriFieldTypeInteger']
+  var NUMBER_FIELD_TYPES = ['esriFieldTypeDouble', 'esriFieldTypeSmallInteger', 'esriFieldTypeInteger', 'integer', 'double']
   //待完善
   var ESRI_FEATURE_TYPE = ['esriGeometryPolygon', 'esriGeometryPoint']
 
@@ -46,6 +46,12 @@ define([
       if (serviceUrl.indexOf('https://') !== 0 && serviceUrl.indexOf('http://') === 0) {
         return serviceUrl.replace('http://', 'https://');
       }
+    },
+
+    isPointLayer(geometryType){
+      return ArrayUtil.some(['esriGeometryPoint','point'], function (v) {
+        return geometryType === v;
+      })
     },
 
     isNumberFieldType(field) {
@@ -388,7 +394,7 @@ define([
 
     },
 
-    getCurrentDisplayPointLayer(param) {
+    getCurrentDisplayLayerWithInfo(param) {
 
       var dfd = new Deferred();
       //获取服务
@@ -424,9 +430,9 @@ define([
       all(promises).then(function (resArr) {
         ArrayUtil
           .forEach(resArr, function (v, k) {
-            if (v.geometryType == 'esriGeometryPoint') {
-              filterServices.push({layer: services[k], info: v});
-            }
+
+            filterServices.push({layer: services[k], info: v});
+
           });
 
         dfd.resolve(filterServices);
