@@ -10,6 +10,7 @@ define([
   var Widget = function (options) {
     this.options = {};
     lang.mixin(this.options, options);
+    //https://map.xyzhgt.com/arcgis/rest/services/test/testPoint/MapServer
 
     this.user = {
       username: '',
@@ -18,16 +19,23 @@ define([
     },
 
     lang.mixin(this.user, options.user);
-    this.portalUrl = options.portalUrl;
+    this.portalUrl = options.config
+      ? options.config.portalUrl
+      : options.portalUrl;
     this.mapView = options.mapView;
 
     if (window.Onemap && window.Onemap.SystemInfo) {
-      this.user.token = window.Onemap.SystemInfo.token;
-      this.user.username = window.Onemap.userName;
-      this.user.password = window.Onemap.passWord;
+      this.user.token = window.Onemap.SystemInfo.token || 'kaKGaz3dglAN1wLFRk0AEJbmYb_SY8VvxXgCJfciyISRuqKw-Ue4xxbeRmfAxdyLgSY-EKhCYAHptdwd' +
+        'o-bO2yRR_Lic__obJjIXbCNtHdcUeFEpKtxx-wPzipYXT4zDB5H85Peln1_c7jkV1J0MPf0lhLej_0GE' +
+          '-mH-zFWLrvo.';
+      this.user.username = window.Onemap.SystemInfo.user.username||'lilei';
     }
 
-    this.init({srcNodeId: options.srcNodeId});
+    var srcNodeid = options.config
+      ? options.config.srcNodeId
+      : options.srcNodeId;
+
+    this.init({srcNodeId: srcNodeid});
   }
 
   Widget.prototype = {
@@ -64,6 +72,8 @@ define([
 
             }))
 
+        }), lang.hitch(this, function (err) {
+          throw new Error('获取用户信息失败：' + err);
         }));
 
     },
