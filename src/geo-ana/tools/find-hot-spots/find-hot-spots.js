@@ -147,20 +147,9 @@ define([
     },
     inputLayerChange(evt) {
 
-      var layerId = evt.target.value;
-      var layer = this
-        .mapView
-        .map
-        .findLayerById(layerId);
-      var value;
+      var layerUrl = evt.target.value;
 
-      if (layer.sublayers && layer.sublayers.items.length === 1) {
-        value = layer.url + '/0';
-      } else {
-        value = layer.url;
-      }
-
-      this.setParam('inputLayer', value);
+      this.setParam('inputLayer', layerUrl);
 
       //重置analysisField
       this.setParam('analysisField', '');
@@ -169,17 +158,12 @@ define([
       var avaliableFields = [];
 
       var layer = ArrayUtil.filter(this.data.availableServices, function (v) {
-        return v.layer.id === layerId;
+        return v.url === layerUrl;
       }, this)[0];
 
       this.data.inputLayer = layer;
 
-      var info;
-      if (layer.layer.type === 'feature') {
-        info = layer.layer
-      } else {
-        info = layer.info;
-      }
+      var info = layer.info
 
       var fields = info.fields;
 
@@ -237,12 +221,8 @@ define([
         return;
       }
 
-      var info;
-      if (layer.layer.type === 'feature') {
-        info = layer.layer
-      } else {
-        info = layer.info;
-      }
+      var info = layer.info;
+      
       var fields = info.fields;
 
       var avaliableFields = [];
@@ -328,16 +308,16 @@ define([
           //为过滤后的结果生成dom
           ArrayUtil.forEach(res, function (v) {
             domConstruct.create('option', {
-              value: v.layer.id,
-              innerHTML: v.layer.title
+              value: v.url,
+              innerHTML: v.info.name
             }, this.layerChooseNode)
           }, this);
 
           ArrayUtil.forEach(res, function (v) {
             if (!arcgisUtil.isPointLayer(v.info.geometryType)) {
               domConstruct.create('option', {
-                value: v.layer.id,
-                innerHTML: v.layer.title
+                value: v.url,
+                innerHTML: v.info.name
               }, this.clusterAreaNode)
             }
           }, this);

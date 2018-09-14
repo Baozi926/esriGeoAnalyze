@@ -31,7 +31,7 @@
       "dojo/domReady!"
     ], function (Map, MapView, GeoAna, esriConfig, FeatureLayer, MapImageLayer) {
 
-      var TOKEN = 'mtx_kDRaXIgJjWdxl-2oFb44Sp90eV9BT5Fdzin-4P0rQsT3XDPavBmJiaiSpVy0zhdbTvcR_2ukDKXw2hs7vopAUhVRC9bCsOg7drpBnZOSxHObH1htcsONvl0ee-73Amo6TRo0BGJfNbcMTnZrfaqzGrrdicg1rVWnYeEyWYg.'
+      var TOKEN = 'LfX5Tb-RJshvp_Ge7NcIUMeU9GIrrnd-MvC9gOJbkAAlWEAtayUH68cBT0ZmI2HMX5HDgJP4S0sfhTqhvTkYDfDELj_TtvgFDZPL7bGy3DjgQtCrPYITH9FrHh7ezwAZ6vLzCKj99Bj9Rs6A5CUme3PgfLw0w3cqXlLsAWcjiaM.'
 
       esriConfig.request.proxyUrl = './src/proxy/proxy.jsp';
       esriConfig.request.forceProxy = true;
@@ -52,7 +52,7 @@
       });
 
       map.add(new FeatureLayer({
-        url: 'https://map.xyzhgt.com/arcgis/rest/services/Hosted/testfeature/FeatureServer',
+        url: 'https://map.xyzhgt.com/arcgis/rest/services/Hosted/testfeature/FeatureServer/1',
         token: TOKEN
       }))//
 
@@ -60,6 +60,12 @@
         url: 'https://map.xyzhgt.com/arcgis/rest/services/test/testPoint/MapServer',
         token: TOKEN
       }))//
+
+      map.add(new MapImageLayer({
+        url: 'https://map.xyzhgt.com/arcgis/rest/services/test/similarPoint/MapServer',
+        token: TOKEN
+      }))//
+
 
 
 
@@ -70,7 +76,6 @@
       geoAna = new GeoAna({
         user: {
           username: 'admin',
-          password: 'Esri1234',
           token: TOKEN
         },
         portalUrl: 'https://map.xyzhgt.com/arcgis/',

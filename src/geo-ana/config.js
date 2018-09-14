@@ -31,6 +31,16 @@ define([], function () {
           }
         ]
       }, {
+        name: '查找位置',
+        children: [
+          {
+            name: '查找相似位置',
+            icon: 'network',
+            url: 'tools/find-similar-locations/find-similar-locations',
+            pic: './src/geo-ana/images/FindSimilarLocations32.png'
+          }
+        ]
+      }, {
         name: 'Demo',
         children: [
           {

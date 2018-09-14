@@ -34,21 +34,9 @@ define([
       this.user = options.user;
       this.analyzeService = options.analyzeService;
 
-      if (false) {
-        // IdentityManager.registerToken({userId: this.user.username, token:
-        // this.user.token, server: 'https://map.xyzhgt.com/arcgis/rest/'});
-        this
-          .mapView
-          .map
-          .add(new FeatureLayer({
-            token: 'z-lSS4vyY6QdE-6Es4r_0iWElyRhSlhXh9DYJB7VBzPONmd7XY84vh5nG-XE1h1h-xShTu26wVGRO2MA' +
-                'zkY-LPsQV6wfFTWwBmXsnCrMNQpQ_ijxMMY_7ie4bZDa8D7AZvcksA8HM06WCixjjRw5dg..' || this.user.token,
-            url: 'https://gis020082.xyzhgt.com/arcgis/rest/services/Hosted/ceshi_shuxing/FeatureSe' +
-                'rver'
-          }));
-
-      }
     },
+
+    data: {},
     //当前步骤
     currentStep: 0,
     //步骤总数
@@ -134,36 +122,20 @@ define([
         disabled: true,
         hidden: true,
         innerHTML: '请选择'
-      }, this.layerChooseNode)
+      }, this.layerChooseNode);
 
-      ArrayUtil.forEach(this.mapView.map.allLayers.items, function (v) {
-        //排除底图
-        var isBaseMap = ArrayUtil.some(this.mapView.map.basemap.baseLayers.items, function (vv) {
-          return vv.id === v.id
-
-        }, this);
-
-        //只针对加载的服务
-        if (v.url && !isBaseMap) {
-          //针对通过MapImageLayer加进来的只有一个图层的情况
-          if (v.sublayers) {
-            if (v.sublayers.items.length === 1) {
-              domConstruct.create('option', {
-                value: v.id,
-                innerHTML: v.title
-              }, this.layerChooseNode)
-            }
-
-          } else {
+      arcgisUtil
+        .getCurrentDisplayLayerWithInfo({mapView: this.mapView, user: this.user})
+        .then(lang.hitch(this, function (res) {
+          this.data.availableServices = res;
+          ArrayUtil.forEach(res, function (v) {
             domConstruct.create('option', {
-              value: v.id,
-              innerHTML: v.title
+              value: v.url,
+              innerHTML: v.info.name
             }, this.layerChooseNode)
-          }
+          }, this);
 
-        }
-
-      }, this);
+        }));
 
     },
     buffer_options_ChangeOverlap: function () {
@@ -216,45 +188,37 @@ define([
 
     inputLayerChange: function (evt) {
 
-      var layerId = evt.target.value;
-      var layer = this
-        .mapView
-        .map
-        .findLayerById(layerId);
-      var value
-      if (layer.sublayers && layer.sublayers.items.length === 1) {
-        value = layer.url + '/0';
-      } else {
-        value = layer.url;
-      }
-      arcgisUtil
-        .getLayerInfo(value, this.user.token)
-        .then(lang.hitch(this, function (res) {
-          var fields = res.fields;
+      var layerUrl = evt.target.value;
 
-          var avaliableFields = [];
-          ArrayUtil.forEach(fields, function (v) {
-            if (arcgisUtil.isNumberFieldType(v.type)) {
-              avaliableFields.push(v);
-            }
-          }, this);
-          domConstruct.empty(this.fieldChooseNode);
+      this.setParam('buffer_layer',layerUrl);
 
-          domConstruct.create('option', {
-            selected: true,
-            disabled: true,
-            hidden: true,
-            innerHTML: '请选择'
-          }, this.fieldChooseNode)
-          //创建字段选择option
-          ArrayUtil.forEach(avaliableFields, function (v) {
-            domConstruct.create('option', {
-              innerHTML: v.alias,
-              value: v.name
-            }, this.fieldChooseNode);
-          }, this)
+      var layer = ArrayUtil.filter(this.data.availableServices, function (v) {
+        return v.url === layerUrl;
+      }, this)[0];
 
-        }));
+      var fields = layer.info.fields;
+
+      var avaliableFields = [];
+      ArrayUtil.forEach(fields, function (v) {
+        if (arcgisUtil.isNumberFieldType(v.type)) {
+          avaliableFields.push(v);
+        }
+      }, this);
+      domConstruct.empty(this.fieldChooseNode);
+
+      domConstruct.create('option', {
+        selected: true,
+        disabled: true,
+        hidden: true,
+        innerHTML: '请选择'
+      }, this.fieldChooseNode)
+      //创建字段选择option
+      ArrayUtil.forEach(avaliableFields, function (v) {
+        domConstruct.create('option', {
+          innerHTML: v.alias,
+          value: v.name
+        }, this.fieldChooseNode);
+      }, this)
 
       this.setParam('buffer_layer', value);
 

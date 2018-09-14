@@ -48,8 +48,10 @@ define([
       }
     },
 
-    isPointLayer(geometryType){
-      return ArrayUtil.some(['esriGeometryPoint','point'], function (v) {
+    isPointLayer(geometryType) {
+      return ArrayUtil.some([
+        'esriGeometryPoint', 'point'
+      ], function (v) {
         return geometryType === v;
       })
     },
@@ -394,8 +396,13 @@ define([
 
     },
 
+    /**
+     * 注意:
+     * 1 如果 图层中有多个子图层，会将图层拆分后，获取每个子图层的信息
+     * 2 结果会以图层Url作为标识字段
+     * 
+    */
     getCurrentDisplayLayerWithInfo(param) {
-
       var dfd = new Deferred();
       //获取服务
       var services = ArrayUtil.filter(param.mapView.map.allLayers.items, function (v) {
@@ -406,36 +413,41 @@ define([
         //只针对加载的服务
         if (v.url && !isBaseMap) {
           //如果mapServer只有一个图层，则按照featureLayer来处理
-          if (v.sublayers) {
-            return v.sublayers.items.length === 1
-          } else {
-            return true
-          }
-
+          return true;
         }
       });
 
-      var filterServices = []
+      var splitServices = [];
+      ArrayUtil.filter(services, function (v) {
+        if (v.type === 'feature') {
+          splitServices.push({
+            url: v.source.url + '/' + v.source.layerId,
+            info: v.source.layerDefinition
+          })
+        } else if (v.sublayers && v.sublayers.items) {
+          ArrayUtil
+            .forEach(v.sublayers.items, function (vv) {
+              splitServices.push({url: vv.url})
 
-      var promises = ArrayUtil.map(services, function (v, k) {
-        var url;
-        if (v.sublayers && v.sublayers.items.length === 1) {
-          url = v.url + '/0';
+            });
         } else {
-          url = v.url
+          splitServices.push({url: v.url})
         }
-        return instance.getLayerInfo(url, param.user.token);
+      });
+
+      var promises = ArrayUtil.map(splitServices, function (v, k) {
+        return instance.getLayerInfo(v.url, param.user.token);
       });
 
       all(promises).then(function (resArr) {
         ArrayUtil
           .forEach(resArr, function (v, k) {
-
-            filterServices.push({layer: services[k], info: v});
+            splitServices[k].info = v;
+            // filterServices.push({layer: services[k], info: v});
 
           });
 
-        dfd.resolve(filterServices);
+        dfd.resolve(splitServices);
 
       });
 

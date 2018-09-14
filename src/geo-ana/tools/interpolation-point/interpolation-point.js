@@ -91,7 +91,7 @@ define([
               .mapView
               .map
               .add(new FeatureLayer({url: serviceUrl, token: this.user.token}));
-              this.onAnalyzeEnd();
+            this.onAnalyzeEnd();
           } else {
             alert('失败')
           }
@@ -142,26 +142,19 @@ define([
     },
 
     inputLayerChange(evt) {
-      var layerId = evt.target.value;
-      var layer = this
-        .mapView
-        .map
-        .findLayerById(layerId);
-      var value;
+      var layerUrl = evt.target.value;
+      
 
-      if (layer.sublayers && layer.sublayers.items.length === 1) {
-        value = layer.url + '/0';
-      } else {
-        value = layer.url;
-      }
-
-      this.setParam('inputLayer', value)
+      this.setParam('inputLayer', layerUrl)
 
       var avaliableFields = [];
 
-      var info = this.getServicesInfo({id: layerId});
+      var layer = ArrayUtil.filter(this.data.availableServices, function (v) {
+        return v.url === layerUrl;
+      }, this)[0];
 
-      var fields = info.fields;
+
+      var fields = layer.info.fields;
 
       ArrayUtil.forEach(fields, function (v) {
         if (arcgisUtil.isNumberFieldType(v.type)) {
@@ -201,66 +194,30 @@ define([
     getAvailableLayer() {
 
       //获取服务
-      var services = ArrayUtil.filter(this.mapView.map.allLayers.items, function (v) {
-        //排除底图
-        var isBaseMap = ArrayUtil.some(this.mapView.map.basemap.baseLayers.items, function (vv) {
-          return vv.id === v.id
-        }, this);
-        //只针对加载的服务
-        if (v.url && !isBaseMap) {
-          //如果mapServer只有一个图层，则按照featureLayer来处理
-          if (v.sublayers) {
-            return v.sublayers.items.length === 1
-          } else {
-            return true
-          }
+      var services = arcgisUtil
+        .getCurrentDisplayLayerWithInfo({mapView: this.mapView, user: this.user})
+        .then(lang.hitch(this, function (res) {
 
-        }
-      }, this);
+          this.data.availableServices = ArrayUtil.filter(res, function (v) {
+            return v.info.geometryType === 'esriGeometryPoint'
+          }, this);
 
-      domConstruct.empty(this.layerChooseNode);
+          domConstruct.empty(this.layerChooseNode);
 
-      domConstruct.create('option', {
-        selected: true,
-        disabled: true,
-        hidden: true,
-        innerHTML: '请选择'
-      }, this.layerChooseNode);
-
-      var filterServices = []
-
-      var promises = ArrayUtil.map(services, function (v, k) {
-        var url;
-        if (v.sublayers && v.sublayers.items.length === 1) {
-          url = v.url + '/0';
-        } else {
-          url = v.url
-        }
-        return arcgisUtil.getLayerInfo(url, this.user.token);
-      }, this);
-
-      all(promises).then(lang.hitch(this, function (resArr) {
-        this.currentServicesInfo = [];
-
-        ArrayUtil.forEach(resArr, function (v, k) {
-          if (v.geometryType == 'esriGeometryPoint') {
-            filterServices.push(services[k]);
-
-            this
-              .currentServicesInfo
-              .push({layer: services[k], info: v})
-          }
-        }, this);
-
-        //为过滤后的结果生成dom
-        ArrayUtil.forEach(filterServices, function (v) {
           domConstruct.create('option', {
-            value: v.id,
-            innerHTML: v.title
-          }, this.layerChooseNode)
-        }, this);
+            selected: true,
+            disabled: true,
+            hidden: true,
+            innerHTML: '请选择'
+          }, this.layerChooseNode);
 
-      }));
+          ArrayUtil.forEach(this.data.availableServices, function (v) {
+            domConstruct.create('option', {
+              value: v.url,
+              innerHTML: v.info.name
+            }, this.layerChooseNode)
+          }, this);
+        }));
 
     },
 
