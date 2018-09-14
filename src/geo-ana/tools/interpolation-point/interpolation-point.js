@@ -214,7 +214,7 @@ define([
           ArrayUtil.forEach(this.data.availableServices, function (v) {
             domConstruct.create('option', {
               value: v.url,
-              innerHTML: v.info.name
+              innerHTML: v.name
             }, this.layerChooseNode)
           }, this);
         }));

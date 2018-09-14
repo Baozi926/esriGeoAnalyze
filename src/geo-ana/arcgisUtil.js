@@ -400,7 +400,7 @@ define([
      * 注意:
      * 1 如果 图层中有多个子图层，会将图层拆分后，获取每个子图层的信息
      * 2 结果会以图层Url作为标识字段
-     * 
+     *
     */
     getCurrentDisplayLayerWithInfo(param) {
       var dfd = new Deferred();
@@ -427,7 +427,7 @@ define([
         } else if (v.sublayers && v.sublayers.items) {
           ArrayUtil
             .forEach(v.sublayers.items, function (vv) {
-              splitServices.push({url: vv.url})
+              splitServices.push({url: vv.url, parentName: v.title})
 
             });
         } else {
@@ -443,6 +443,10 @@ define([
         ArrayUtil
           .forEach(resArr, function (v, k) {
             splitServices[k].info = v;
+            var parentName = splitServices[k].parentName;
+            splitServices[k].name = parentName
+              ? parentName + '-' + v.name
+              : v.name
             // filterServices.push({layer: services[k], info: v});
 
           });

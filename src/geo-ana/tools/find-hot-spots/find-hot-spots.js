@@ -309,7 +309,7 @@ define([
           ArrayUtil.forEach(res, function (v) {
             domConstruct.create('option', {
               value: v.url,
-              innerHTML: v.info.name
+              innerHTML: v.name
             }, this.layerChooseNode)
           }, this);
 
@@ -317,7 +317,7 @@ define([
             if (!arcgisUtil.isPointLayer(v.info.geometryType)) {
               domConstruct.create('option', {
                 value: v.url,
-                innerHTML: v.info.name
+                innerHTML: v.name
               }, this.clusterAreaNode)
             }
           }, this);

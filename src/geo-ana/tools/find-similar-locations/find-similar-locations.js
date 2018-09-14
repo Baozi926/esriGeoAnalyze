@@ -29,14 +29,44 @@ define([
       this.analyzeService = options.analyzeService;
       this.portalInfo = options.portalInfo;
     },
+    data:{},
 
     startup() {
       this.initFolders();
+      this.getAvailableLayers();
       this.useCurrentExtentChange({target: this.useCurrentExtent_Node});
     },
     runTask() {
       var state = this.checkParam();
       if (state.valid) {}
+    },
+    getAvailableLayers() {
+      domConstruct.empty(this.layerChooseNode);
+
+      domConstruct.create('option', {
+        selected: true,
+        disabled: true,
+        hidden: true,
+        innerHTML: '请选择'
+      }, this.layerChooseNode);
+
+      arcgisUtil
+        .getCurrentDisplayLayerWithInfo({mapView: this.mapView, user: this.user})
+        .then(lang.hitch(this, function (res) {
+
+          this.data.availableServices = res;
+
+          ArrayUtil.forEach(res, function (v) {
+            if (arcgisUtil.isPointLayer(v.info.geometryType)) {
+              domConstruct.create('option', {
+                value: v.url,
+                innerHTML: v.name
+              }, this.layerChooseNode);
+            }
+          }, this);
+
+        }));
+
     },
     inputLayerChange() {},
 
