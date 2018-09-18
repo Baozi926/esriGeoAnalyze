@@ -148,7 +148,10 @@ define([
 
       }, this);
 
-      var input = domConstruct.create('input', {}, this.valueNode);
+      var input = domConstruct.create('input', {
+        className:"mt mbh",
+        type:'text'
+      }, this.valueNode);
 
       this.ui.valueNode = input
 

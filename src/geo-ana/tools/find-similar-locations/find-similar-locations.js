@@ -185,7 +185,7 @@ define([
       if (fileds.length > 0) {
         ArrayUtil
           .forEach(fileds, function (v) {
-            var template = '<label><input type="checkbox" >' + v.alias + '</label>';
+            var template = '<label><input  type="checkbox" >' + v.alias + '</label>';
             var li = domConstruct.create('li', {
               innerHTML: template
             }, this.similarRuleNodes);
