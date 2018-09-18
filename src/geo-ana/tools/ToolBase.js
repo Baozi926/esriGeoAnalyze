@@ -68,7 +68,7 @@ define([
         }
       }
       if (flag) {} else {
-        throw new Error('未找到相应参数');
+        throw new Error('未找到相应参数' + name);
       }
 
     },
@@ -91,7 +91,7 @@ define([
           }
         }
       }
-      throw new Error('未找到相应参数');
+      throw new Error('未找到相应参数:' + name);
 
     },
     /**

@@ -11,7 +11,7 @@ define([
   'dojo/_base/array',
   '../../arcgisUtil'
 ], function (Evented, all, Deferred, lang, domClass, domStyle, esriConfig, esriRequest, declare, ArrayUtil, arcgisUtil) {
-  var widget = declare('caihm.widgets.find-similar-locations-task', [], {
+  var widget = declare('caihm.widgets.DemoTask', [], {
     run(param) {
       var dfd = new Deferred();
       arcgisUtil
@@ -22,7 +22,7 @@ define([
             .then(lang.hitch(this, function (res) {
               var event = arcgisUtil.watchJob(lang.mixin(param, {
                 jobId: res.jobId
-              }, {analyzeToolName: 'FindSimilarLocations'}));
+              }, {analyzeToolName: 'CalculateDensity'}));
 
               event.on('success', lang.hitch(this, function (res) {
                 console.log(res)
@@ -64,7 +64,8 @@ define([
     submitJob(param) {
 
       var dfd = new Deferred();
-      var url = param.analyzeService + '/FindSimilarLocations/submitJob';
+      var url = param.analyzeService + '/CalculateDensity/submitJob';
+
       var OutputName = {
         "serviceProperties": {
           "name": param.param.exportService.name,
@@ -76,15 +77,13 @@ define([
         }
       }
 
-
       var queryParam = {
         f: 'json',
         inputLayer: JSON.stringify({"url": param.param.inputLayer}),
-        inputQuery: param.param.inputQuery, //'ADCLASS = 3',
-        searchLayer: JSON.stringify({"url": param.param.searchLayer}),
-        analysisFields: JSON.stringify(param.param.analysisFields) ,
-        numberOfResults: 0,
-        returnProcessInfo: true,
+        field: param.param.field,
+        areaUnits: 'SquareKilometers',
+        classificationType: 'EqualInterval',
+        numClasses: 10,
         OutputName: JSON.stringify(OutputName),
         context: JSON.stringify(param.param.context),
         token: param.user.token
@@ -102,7 +101,6 @@ define([
       });
 
       return dfd;
-
     }
   });
 

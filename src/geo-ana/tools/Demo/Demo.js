@@ -15,8 +15,8 @@ define([
   'dojo/_base/array',
   '../../arcgisUtil',
   '../ToolBase',
-  './DemoTask' //此处需修改成自己的task
-], function (FeatureLayer,geoAnaConfig,ArrayUtil, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, arrayUtil, arcgisUtil, ToolBase, DemoTask) {
+  './calculate-density-task' //此处需修改成自己的task
+], function (FeatureLayer, geoAnaConfig, ArrayUtil, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, arrayUtil, arcgisUtil, ToolBase, CalculateDensityTask) {
   var widget = declare('caihm.widgets.Buffer', [
     _WidgetBase, _TemplatedMixin, ToolBase
   ], {
@@ -33,11 +33,16 @@ define([
     startup() {
       this.initFolders();
       this.useCurrentExtentChange({target: this.useCurrentExtent_Node});
+      this.getAvailableLayers();
     },
     runTask() {
       var state = this.checkParam();
       if (state.valid) {}
     },
+    getAvailableLayers(){
+
+    },
+    inputLayerChange() {},
     resultNameChange: function (evt) {
       this.setParam('result_layer_name', evt.target.value)
     },
@@ -78,7 +83,7 @@ define([
       return [
         {
           name: '步骤一',
-          srcNode:null,
+          srcNode: this.step_1_node,
           params: {
             inputLayer: {
               value: null,
@@ -95,9 +100,9 @@ define([
         }, {
           name: '步骤二',
           params: {},
-          srcNode:null,
+          srcNode: this.step_2_node
         }, {
-          srcNode: this.stepNode_3,
+          srcNode: this.step_3_node,
           name: '步骤二',
           params: {
             use_current_extent: {},

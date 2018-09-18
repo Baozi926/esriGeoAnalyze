@@ -4,16 +4,34 @@
     <span class="text">查找相似位置</span>
   </div>
   <div class="main-content">
-    <div class="step _1">
+    <div class="step _1" data-dojo-attach-point="step_1_node">
       <div class="title">选择包含参考位置的图层</div>
       <select class="mth" data-dojo-attach-point="layerChooseNode" data-dojo-attach-event='onchange: inputLayerChange'>
       </select>
+    </div>
 
+    <div class="step _2" data-dojo-attach-point="step_2_node">
+      <div class="title">您可以使用所有位置或进行选择</div>
+      <div data-dojo-attach-point="inputQueryNode"></div>
+    </div>
+
+    <div class="step _3" data-dojo-attach-point="step_3_node">
+      <div class="title">在以下图层中搜索相似的位置</div>
+      <select class="mth" data-dojo-attach-point="layerCompareNode" data-dojo-attach-event='onchange: searchLayerChange'>
+      </select>
+    </div>
+
+    <div  class="step _4" data-dojo-attach-point="step_4_node">
+      <div class="title">相似性依据</div>
+      <div data-dojo-attach-point="similarRuleNodes" class="scrollable similar-rule-ctn">
+
+
+      </div>
 
     </div>
 
 
-    <div class="step _3" data-dojo-attach-point="stepNode_3">
+    <div class="step _3" data-dojo-attach-point="step_5_node">
       <span class="title">结果图层名称</span>
       <input class="mt mbh" type="text" data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
       <select class="mth" data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
@@ -24,8 +42,7 @@
 
     <div class="step">
       <input class="cbox" checked type="checkbox" data-dojo-attach-point='useCurrentExtent_Node' data-dojo-attach-event='onchange: useCurrentExtentChange' />使用当前地图范围<br>
-      <button data-dojo-attach-point="runButtonNode" class="btn run mt" data-dojo-attach-event="onclick: runTask"><i
-          class="fa fa-refresh fa-spin fa-fw"></i> 运行分析</button>
+      <button data-dojo-attach-point="runButtonNode" class="btn run mt" data-dojo-attach-event="onclick: runTask"> 运行分析</button>
     </div>
   </div>
 

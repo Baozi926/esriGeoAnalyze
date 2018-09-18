@@ -22,7 +22,7 @@ define([
             .then(lang.hitch(this, function (res) {
               var event = arcgisUtil.watchJob(lang.mixin(param, {
                 jobId: res.jobId
-              }, {analyzeToolName: 'InterpolatePoints'}));
+              }, {analyzeToolName: ''}));
 
               event.on('success', lang.hitch(this, function (res) {
                 console.log(res)
@@ -61,7 +61,7 @@ define([
 
       return dfd;
     },
-    submitJob(){
+    submitJob(param){
 
     }
   });

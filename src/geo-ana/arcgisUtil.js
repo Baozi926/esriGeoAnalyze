@@ -56,9 +56,22 @@ define([
       })
     },
 
-    isNumberFieldType(field) {
+    isPolylineLayer(geometryType) {
+      return ArrayUtil.some([
+        'esriGeometryPolyline',
+        'polyline',
+        'esriGeometryLine',
+        'line',
+        'esriGeometryRing',
+        'ring'
+      ], function (v) {
+        return geometryType === v;
+      })
+
+    },
+    isNumberFieldType(fieldType) {
       return ArrayUtil.some(NUMBER_FIELD_TYPES, function (v) {
-        return field === v;
+        return fieldType === v;
       })
 
     },
@@ -400,6 +413,7 @@ define([
      * 注意:
      * 1 如果 图层中有多个子图层，会将图层拆分后，获取每个子图层的信息
      * 2 结果会以图层Url作为标识字段
+     * 3 每有一个图层就会发一个请求，如果显示的图层较多，此方法可能存在性能问题
      *
     */
     getCurrentDisplayLayerWithInfo(param) {

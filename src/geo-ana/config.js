@@ -10,7 +10,7 @@ define([], function () {
         children: [
           {
             name: '缓冲区分析',
-            icon: 'buffer',
+            icon: 'CreateBuffers',
             url: 'tools/Buffer/Buffer',
             pic: './src/geo-ana/images/CreateBuffers32.png'
           }
@@ -20,14 +20,20 @@ define([], function () {
         children: [
           {
             name: '差值点',
-            icon: 'buffer',
+            icon: 'CreateInterpolatedSurface',
             url: 'tools/interpolation-point/interpolation-point',
-            pic:  './src/geo-ana/images/CreateInterpolatedSurface32.png'
+            pic: './src/geo-ana/images/CreateInterpolatedSurface32.png'
           }, {
             name: '热点分析',
             icon: 'findHotSpots',
             url: 'tools/find-hot-spots/find-hot-spots',
             pic: './src/geo-ana/images/FindHotSpots32.png'
+          }, {
+            name: '计算密度',
+            icon: 'CreateDensitySurface',
+            url: 'tools/calculate-density/calculate-density',
+            pic: './src/geo-ana/images/CreateDensitySurface32.png'
+
           }
         ]
       }, {
@@ -35,7 +41,7 @@ define([], function () {
         children: [
           {
             name: '查找相似位置',
-            icon: 'network',
+            icon: 'FindSimilarLocations',
             url: 'tools/find-similar-locations/find-similar-locations',
             pic: './src/geo-ana/images/FindSimilarLocations32.png'
           }
@@ -45,7 +51,7 @@ define([], function () {
         children: [
           {
             name: 'demo',
-            icon: 'network',
+            icon: 'FindHotSpots',
             url: 'tools/Demo/Demo',
             pic: './src/geo-ana/images/FindHotSpots32.png'
           }
