@@ -15,8 +15,8 @@ define([
   'dojo/_base/array',
   '../../arcgisUtil',
   '../ToolBase',
-  './calculate-density-task' //此处需修改成自己的task
-], function (FeatureLayer, geoAnaConfig, ArrayUtil, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, arrayUtil, arcgisUtil, ToolBase, CalculateDensityTask) {
+  './DemoTask' //此处需修改成自己的task
+], function (FeatureLayer, geoAnaConfig, ArrayUtil, domConstruct, lang, domClass, domStyle, esriConfig, esriRequest, _WidgetBase, _TemplatedMixin, declare, template, arrayUtil, arcgisUtil, ToolBase, DemoTask) {
   var widget = declare('caihm.widgets.Buffer', [
     _WidgetBase, _TemplatedMixin, ToolBase
   ], {
