@@ -6,6 +6,11 @@
 
 
 # 部署步骤
+
+如果是直接放在根目录下，只需要修改index.html中token、username、portalUrl这三个参数。
+
+其他注意事项如下:
+
 1. 放到tomcat下，然后你需要一个安装了arcgis portal、arcgis server、arcgis datastore 的环境，记得验证datastore是否安装成功哦。
 2. 如果不是放在webapp的根目录下，需要更改根目录下的dojoConfig.js，搞arcgis api 开发的小伙伴应该都懂吧
 3. 如果你的项目结构发生改变的话，可能需要在index.html中更改proxy.jsp为你的部署路径。
@@ -22,3 +27,10 @@
 + 缓冲区分析
 + 热点分析
 + 点差值
++ 计算密度
++ 派生新位置
++ 提取数据
++ 查找相似位置
++ 插值点
++ 范围内统计
+
