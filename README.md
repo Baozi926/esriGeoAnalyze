@@ -4,6 +4,9 @@
 因为arcgis JavaScript api 4.0+ 的空间分析并没有出来，所以在项目中若需要用 4以上的api又需要空间分析，就没办法了。
 因此，我用4.8的api实现了部分空间分析工具，欢迎感兴趣的小伙伴共同参与完善。
 
+# 截图
+![demo picture](https://github.com/Baozi926/esriGeoAnalyze/blob/master/src/screenShot/TIM%E6%88%AA%E5%9B%BE20181023094303.png?raw=true)
+![demo picture](https://github.com/Baozi926/esriGeoAnalyze/blob/master/src/screenShot/TIM%E6%88%AA%E5%9B%BE20181023094139.png?raw=true)
 
 # 部署步骤
 
@@ -39,4 +42,5 @@
 
 # TODO
 + 完善其他工具
+
 
