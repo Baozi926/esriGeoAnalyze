@@ -11,9 +11,10 @@ define([
   'dojo/_base/array',
   '../../arcgisUtil'
 ], function (Evented, all, Deferred, lang, domClass, domStyle, esriConfig, esriRequest, declare, ArrayUtil, arcgisUtil) {
-  var widget = declare('caihm.widgets.findHotSpots', [], {
+  var widget = declare('caihm.widgets.summarize-within-task', [], {
+
     run(param) {
-      
+
       var dfd = new Deferred();
       arcgisUtil
         .createServiceWithValidation(param)
@@ -23,20 +24,20 @@ define([
             .then(lang.hitch(this, function (res) {
               var event = arcgisUtil.watchJob(lang.mixin(param, {
                 jobId: res.jobId
-              }, {analyzeToolName: 'FindHotSpots'}));
+              }, { analyzeToolName: 'SummarizeWithin'}));
 
               event.on('success', lang.hitch(this, function (res) {
                 console.log(res)
-               
+                
                 dfd.resolve({success: true, serviceUrl: param.portalItem.url});
               }));
 
               event.on('error', lang.hitch(this, function (res) {
-             
                 var msg = '';
 
                 ArrayUtil.forEach(res.messages, function (v, k) {
                   msg += k + ': ' + v.description + '\n';
+
                 }, this);
 
                 arcgisUtil.removeServicefromPortal(param);
@@ -47,11 +48,6 @@ define([
               event.on('msg', lang.hitch(this, function (res) {
                 console.log(res)
               }));
-
-              event.on('internet-error', lang.hitch(this, function (err) {
-                arcgisUtil.removeServicefromPortal(param);
-                dfd.reject(err);
-              }))
 
             }), lang.hitch(this, function (err) {
               arcgisUtil.removeServicefromPortal(param);
@@ -67,12 +63,15 @@ define([
       return dfd;
     },
     submitJob(param) {
-    
-
+      //
+        console.log(param);
       var dfd = new Deferred();
-      var url = param.analyzeService + '/FindHotSpots/submitJob';
-      var analysisLayer = {
+      var url = param.analyzeService + '/SummarizeWithin/submitJob';
+      var inputLayer = {
         "url": param.param.inputLayer
+      }
+      var summaryLayer = {
+        "url": param.param.summaryLayer
       }
       var OutputName = {
         "serviceProperties": {
@@ -86,17 +85,20 @@ define([
       }
 
       var queryParam = {
-        f: 'json',
-        analysisLayer: JSON.stringify(analysisLayer),
-        analysisField:param.param.analysisField,
-        boundingPolygonLayer:param.param.boundingPolygonLayer,
-        aggregationPolygonLayer:param.param.aggregationPolygonLayer,
-        shapeType: 'fishnet',
-        returnProcessInfo: true,
-        OutputName: JSON.stringify(OutputName),
-        context: JSON.stringify(param.param.context),
-        token: param.user.token
+          f: 'json',
+          sumWithinLayer: JSON.stringify(inputLayer),
+          summaryLayer: JSON.stringify(summaryLayer), 
+          sumShape: param.param.sumShape,
+          shapeUnits: param.param.shapeUnits,
+          summaryFields: JSON.stringify(param.param.summaryFields),
+          groupByField: param.param.groupByField,
+          minorityMajority: param.param.minorityMajority,
+          percentShape: param.param.percentShape,
+          OutputName: JSON.stringify(OutputName),
+          context: JSON.stringify(param.param.context),
+          token: param.user.token
       }
+       
 
       esriRequest(url, {
           query: queryParam,
@@ -110,6 +112,7 @@ define([
       });
 
       return dfd;
+
     }
   });
 

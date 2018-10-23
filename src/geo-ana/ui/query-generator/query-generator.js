@@ -98,8 +98,9 @@ define([
       //如果不需要queryValue 如 不为空的情况，就将queryValue设为1
       if (tmp[0].notRequireValue) {
         this.queryValue = 1;
-        this.ui.valueNode.disabled = true
-      }else{
+        this.ui.valueNode.disabled = true;
+        this.ui.valueNode.value = ''
+      } else {
         this.ui.valueNode.disabled = false
       }
 
@@ -113,11 +114,33 @@ define([
       this.data.fields = fields;
       this.render();
     },
+    //获取查询文本描述
+    getText() {
 
+      var type = ArrayUtil.filter(this.data.relations, function (v) {
+        return v.value === this.queryTemplate
+      }, this)[0];
+
+      var value = this.queryValue
+      if (isNaN(value)) {
+        value = "'" + value + "'";
+      }
+
+      var text = this.queryfeild + ' ' + type.name + ' ' + (type.notRequireValue
+        ? ''
+        : value);
+      return text;
+    },
+    //获取查询的sql语句
     getQuery() {
+      var value = this.queryValue;
+      if (isNaN(value)) {
+        value = "'" + value + "'";
+      }
+
       var query = string.substitute(this.queryTemplate, {
         field: this.queryfeild,
-        value: this.queryValue
+        value: value
       })
 
       console.log(query);
@@ -125,9 +148,9 @@ define([
     },
 
     isvalid() {
-      return !isNaN(this.queryValue) && this.queryfeild && this.queryTemplate
+      //todo
+      return true
     },
-
 
     render() {
       domConstruct.empty(this.fieldsNode);
@@ -149,18 +172,15 @@ define([
       }, this);
 
       var input = domConstruct.create('input', {
-        className:"mt mbh",
-        type:'text'
+        className: "mt mbh",
+        type: 'text'
       }, this.valueNode);
 
       this.ui.valueNode = input
 
       on(input, 'change', lang.hitch(this, function (evt) {
-        if (isNaN(evt.target.value)) {
-          this.queryValue = null;
-        } else {
-          this.queryValue = evt.target.value;
-        }
+
+        this.queryValue = evt.target.value;
 
       }));
 

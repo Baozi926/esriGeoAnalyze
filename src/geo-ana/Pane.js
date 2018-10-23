@@ -10,11 +10,11 @@ define([
   'dojo/_base/array',
   'dojo/dom-class',
   'dojo/on',
-  'dojo/touch'
-], function (config, declare, domConstruct, dom, lang, _WidgetBase, _TemplatedMixin, templateString, ArrayUtil, domClass, on, touch) {
+  'dojo/touch',
+  './task-monitor/task-monitor'
+], function (config, declare, domConstruct, dom, lang, _WidgetBase, _TemplatedMixin, templateString, ArrayUtil, domClass, on, touch, TaskMonitor) {
 
-
-  var REQUIRE_URL_PERFIX = 'src/geo-ana/'
+  var REQUIRE_URL_PERFIX = 'src/geo-ana/'; //modules/geoAnalyze/
   var clazz = declare('modules.geoAnalyze.Pane', [
     _WidgetBase, _TemplatedMixin
   ], {
@@ -44,23 +44,17 @@ define([
       }));
       this.switchPane('list');
       this.render();
+      TaskMonitor
+        .getInstance()
+        .setDetailNode(domConstruct.create('div', {
+          className: 'detail-cnt'
+        }, this.domNode));
 
-      //每当图层变化时重新加载空间分析组件
-      // this
-      //   .mapView
-      //   .on('layerview-create', lang.hitch(this, function () {
-      //     if (this.data.currentToolParam) {
-      //       this.reloadTool();
-      //     }
-      //   }));
-
-      // this
-      //   .mapView
-      //   .on('layerview-destroy', lang.hitch(this, function () {
-      //     if (this.data.currentToolParam) {
-      //       this.reloadTool();
-      //     }
-      //   }));
+      // 每当图层变化时重新加载空间分析组件 this   .mapView   .on('layerview-create', lang.hitch(this,
+      // function () {     if (this.data.currentToolParam) {       this.reloadTool();
+      //  }   })); this   .mapView   .on('layerview-destroy', lang.hitch(this,
+      // function () {     if (this.data.currentToolParam) {       this.reloadTool();
+      //  }   }));
 
     },
     data: {
@@ -125,8 +119,9 @@ define([
               portalInfo: that.portalInfo,
               analyzeService: that.analyzeService,
               portalUrl: that.portalUrl,
-              mapView: that.mapView
-
+              mapView: that.mapView,
+              parent: that,
+              toolName: config.name
             }, domConstruct.create('div', {}, that.toolSrcNode));
             if (lang.isFunction(widget.startup)) {
               widget.startup();
@@ -163,7 +158,8 @@ define([
           ArrayUtil.forEach(v.children, function (vv) {
             var dom = domConstruct.create('a', {
               innerHTML: '<img class="pic" src="' + vv.pic + '" ></img><span class="name">' + vv.name + '</span>',
-              className: 'tool-item cell service-item ' + (vv.icon || '')
+              className: 'tool-item cell service-item ' + (vv.icon || ''),
+              style:'cursor:pointer'
             }, container);
 
             on(dom, touch.press, lang.hitch(this, function (evt) {

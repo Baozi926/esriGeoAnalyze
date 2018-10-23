@@ -1,0 +1,66 @@
+<div class="widget summarize-within">
+  <div class="main-title">
+    <span class="text">范围内汇总</span>
+  </div>
+  <div class="main-content">
+      <div class="step _1" data-dojo-attach-point="step_1_node">
+          <div class="title">
+              选择要汇总其边界内其他要素的区域图层
+          </div>
+          <div class="content mt">
+              <select data-dojo-attach-point="layerChooseNode" data-dojo-attach-event='onchange: inputLayerChange'></select>
+          </div>
+      </div>
+      <div class="step _2" data-dojo-attach-point="step_2_node">
+          <div class="title">
+              请选择一个要汇总的图层
+          </div>
+          <div class="content mt">
+              <select data-dojo-attach-point="huizongNode" data-dojo-attach-event='onchange: huizongLayerChange'></select>
+          </div>
+      </div>
+      <div class="step _3" data-dojo-attach-point="step_3_node">
+          <div class="title">
+              添加汇总图层中的统计数据
+          </div>
+          <div class="content mt">
+              <input class="cbox" checked type="checkbox" data-dojo-attach-point='jishuCheck_Node' data-dojo-attach-event='onchange: jishuCheckChange' disabled="disabled"/><font data-dojo-attach-point='TxtJishu'>范围内总面积</font>
+              <select class="DanWeialiSelect" data-dojo-attach-point="DanWei" data-dojo-attach-event='onchange: DanWeiChange'>
+                  <option value="SquareMiles" selected>平方英里</option>
+                  <option value="SquareKilometers">平方千米</option>
+                  <option value="SquareMeters">平方米</option>
+                  <option value="Hectares">公顷</option>
+                  <option value="Acres">英亩</option>
+              </select><br>
+              <div data-dojo-attach-point="summaryFields_Node">
+                  <select class="aliSelect" id="ZiDuan1" data-dojo-attach-point="ZiDuan1" data-dojo-attach-event='onchange: ZiDuanChange'></select>
+                  <select class="aliSelect" id="TongJiXinXi1" data-dojo-attach-point="TongJiXinXi1" data-dojo-attach-event='onchange: TongJiXinXiChange'></select>
+              </div>
+          </div>
+      </div>
+      <div class="step _4" data-dojo-attach-point="step_4_node">
+          <div class="title">
+              选择作为分组依据的字段(可选)
+          </div>
+          <div class="content mt">
+              <select data-dojo-attach-point="fenZuFieldNode" data-dojo-attach-event='onchange: fenZuFieldChange'></select>
+              <input class="cbox" checked type="checkbox" data-dojo-attach-point='TianJia1' data-dojo-attach-event='onchange: duoshuCheckChange' disabled="disabled"/>添加少数、多数<br>
+              <input class="cbox" checked type="checkbox" data-dojo-attach-point='TianJia2' data-dojo-attach-event='onchange: baifenbiCheckChange' disabled="disabled"/>添加百分比
+          </div>
+      </div>
+      <div class="step _5" data-dojo-attach-point="step_5_node">
+          <span class="title">输出文件名</span>
+          <input class="mt mbh" type="text" data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
+          <select class="mth" data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
+              <option selected disabled hidden>请选择</option>
+              <option value="admin">管理员</option>
+          </select>
+      </div>
+      <div class="step">
+          <input class="cbox" checked type="checkbox" data-dojo-attach-point='useCurrentExtent_Node' data-dojo-attach-event='onchange: useCurrentExtentChange' />使用当前地图范围<br>
+          <button data-dojo-attach-point="runButtonNode" class="btn run mt" data-dojo-attach-event='onclick: runTask'>运行分析</button>
+
+      </div>
+  </div>
+
+</div>

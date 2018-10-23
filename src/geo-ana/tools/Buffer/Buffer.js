@@ -26,6 +26,7 @@ define([
   var widget = declare('caihm.widgets.Buffer', [
     _WidgetBase, _TemplatedMixin, ToolBase
   ], {
+    toolName: '缓冲区分析',
     templateString: template,
     constructor: function (options, srcNode) {
       this.mapView = options.mapView;
@@ -50,8 +51,6 @@ define([
       this.getAvailableLayers();
       this.initDisatanceUnits();
       this.initFolders();
-      this.onAnalyzeStart();
-      this.onAnalyzeEnd();
     },
     initFolders() {
 
@@ -63,20 +62,17 @@ define([
         innerHTML: '请选择'
       }, this.resultFolderNode);
 
-      if (this.user.info.folders.length === 0) {
+      domConstruct.create('option', {
+        value: this.user.username,
+        innerHTML: this.user.username
+      }, this.resultFolderNode)
+
+      ArrayUtil.forEach(this.user.info.folders, function (v) {
         domConstruct.create('option', {
-          value: this.user.username,
-          innerHTML: this.user.username
+          value: v.id,
+          innerHTML: v.title
         }, this.resultFolderNode)
-      } else {
-        ArrayUtil
-          .forEach(this.user.info.folders, function (v) {
-            domConstruct.create('option', {
-              value: v.id,
-              innerHTML: v.title
-            }, this.resultFolderNode)
-          }, this);
-      }
+      }, this);
 
     },
 
@@ -128,12 +124,16 @@ define([
         .getCurrentDisplayLayerWithInfo({mapView: this.mapView, user: this.user})
         .then(lang.hitch(this, function (res) {
           this.data.availableServices = res;
-          ArrayUtil.forEach(res, function (v) {
-            domConstruct.create('option', {
-              value: v.url,
-              innerHTML: v.name
-            }, this.layerChooseNode)
-          }, this);
+          if (res.length === 0) {
+             this.onNoServiceAvailable();
+          }
+          ArrayUtil
+            .forEach(res, function (v) {
+              domConstruct.create('option', {
+                value: v.url,
+                innerHTML: v.name
+              }, this.layerChooseNode)
+            }, this);
 
         }));
 
@@ -190,7 +190,7 @@ define([
 
       var layerUrl = evt.target.value;
 
-      this.setParam('buffer_layer',layerUrl);
+      this.setParam('buffer_layer', layerUrl);
 
       var layer = ArrayUtil.filter(this.data.availableServices, function (v) {
         return v.url === layerUrl;
@@ -282,16 +282,17 @@ define([
               serviceUrl = arcgisUtil.forceUrlToHttps(serviceUrl);
             }
 
+            var layer = new FeatureLayer({url: serviceUrl, token: this.user.token})
+
             this
               .mapView
               .map
-              .add(new FeatureLayer({url: serviceUrl, token: this.user.token}));
-            this.onAnalyzeEnd();
+              .add(layer);
 
-          } else {
-            alert('失败')
           }
+          this.onAnalyzeEnd(res);
         }), function (err) {
+          this.onAnalyzeEnd({success: false, msg: err});
           alert(err, {delay: 7000});
         })
 

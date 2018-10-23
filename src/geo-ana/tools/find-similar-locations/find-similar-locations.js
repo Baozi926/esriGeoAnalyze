@@ -92,11 +92,9 @@ define([
               .mapView
               .map
               .add(new FeatureLayer({url: serviceUrl, token: this.user.token}));
-            this.onAnalyzeEnd();
-          } else {
-            alert('失败')
           }
 
+          this.onAnalyzeEnd(res);
         }), lang.hitch(this, function (res) {
           alert(res);
           this.onAnalyzeEnd();
@@ -128,8 +126,11 @@ define([
 
           this.data.availableServices = res;
 
+          var hasService = false;
+
           ArrayUtil.forEach(res, function (v) {
             if (arcgisUtil.isPointLayer(v.info.geometryType)) {
+              hasService = true;
               domConstruct.create('option', {
                 value: v.url,
                 innerHTML: v.name
@@ -137,14 +138,19 @@ define([
             }
           }, this);
 
-          ArrayUtil.forEach(res, function (v) {
-            if (arcgisUtil.isPointLayer(v.info.geometryType)) {
-              domConstruct.create('option', {
-                value: v.url,
-                innerHTML: v.name
-              }, this.layerCompareNode);
-            }
-          }, this);
+          if (!hasService) {
+             this.onNoServiceAvailable();
+          }
+
+          ArrayUtil
+            .forEach(res, function (v) {
+              if (arcgisUtil.isPointLayer(v.info.geometryType)) {
+                domConstruct.create('option', {
+                  value: v.url,
+                  innerHTML: v.name
+                }, this.layerCompareNode);
+              }
+            }, this);
 
         }));
 
@@ -255,20 +261,17 @@ define([
         innerHTML: '请选择'
       }, this.resultFolderNode);
 
-      if (this.user.info.folders.length === 0) {
+      domConstruct.create('option', {
+        value: this.user.username,
+        innerHTML: this.user.username
+      }, this.resultFolderNode);
+
+      ArrayUtil.forEach(this.user.info.folders, function (v) {
         domConstruct.create('option', {
-          value: this.user.username,
-          innerHTML: this.user.username
+          value: v.id,
+          innerHTML: v.title
         }, this.resultFolderNode)
-      } else {
-        ArrayUtil
-          .forEach(this.user.info.folders, function (v) {
-            domConstruct.create('option', {
-              value: v.id,
-              innerHTML: v.title
-            }, this.resultFolderNode)
-          }, this);
-      }
+      }, this);
 
     },
     initParams: function () {

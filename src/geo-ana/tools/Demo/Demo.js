@@ -20,6 +20,7 @@ define([
   var widget = declare('caihm.widgets.Buffer', [
     _WidgetBase, _TemplatedMixin, ToolBase
   ], {
+    toolName: 'demo分析',
     templateString: template,
     constructor(options) {
 
@@ -30,18 +31,27 @@ define([
       this.portalInfo = options.portalInfo;
     },
 
+    postCreate() {
+      //运行父类的postCreate函数
+      this.inherited(arguments);
+    },
     startup() {
       this.initFolders();
       this.useCurrentExtentChange({target: this.useCurrentExtent_Node});
       this.getAvailableLayers();
     },
     runTask() {
-      var state = this.checkParam();
-      if (state.valid) {}
+      var state = {
+        valid: true
+      } || this.checkParam();
+      if (state.valid) {
+        this.onAnalyzeStart();
+        setTimeout(lang.hitch(this, function () {
+          this.onAnalyzeEnd({success: false})
+        }), 3000);
+      }
     },
-    getAvailableLayers(){
-
-    },
+    getAvailableLayers() {},
     inputLayerChange() {},
     resultNameChange: function (evt) {
       this.setParam('result_layer_name', evt.target.value)
@@ -68,6 +78,11 @@ define([
           innerHTML: this.user.username
         }, this.resultFolderNode)
       } else {
+        domConstruct.create('option', {
+          value: this.user.username,
+          innerHTML: this.user.username
+        }, this.resultFolderNode);
+        
         ArrayUtil
           .forEach(this.user.info.folders, function (v) {
             domConstruct.create('option', {
@@ -103,7 +118,7 @@ define([
           srcNode: this.step_2_node
         }, {
           srcNode: this.step_3_node,
-          name: '步骤二',
+          name: '步骤三',
           params: {
             use_current_extent: {},
             result_layer_name: {

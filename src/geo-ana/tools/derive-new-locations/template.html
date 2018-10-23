@@ -1,0 +1,30 @@
+<div class="widget" style="padding: 7px;">
+
+  <div class="main-title">
+    <span class="text">派生新位置</span>
+  </div>
+  <div class="main-content">
+    <div class="step _1" data-dojo-attach-point="step_1_node">
+      <span class="title">选择需要计算的点图层</span>
+      <div class="content" data-dojo-attach-point="inputLayersNode">
+      
+      </div>
+    </div>
+
+
+    <div class="step _2" data-dojo-attach-point="step_2_node">
+      <span class="title">结果图层名称</span>
+      <input class="mt mbh" type="text" data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
+      <select class="mth" data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
+        <option selected disabled hidden>请选择</option>
+        <option value="admin">管理员</option>
+      </select>
+    </div>
+
+    <div class="step">
+      <input class="cbox" checked type="checkbox" data-dojo-attach-point='useCurrentExtent_Node' data-dojo-attach-event='onchange: useCurrentExtentChange' />使用当前地图范围<br>
+      <button data-dojo-attach-point="runButtonNode" class="btn run mt" data-dojo-attach-event="onclick: runTask"> 运行分析</button>
+    </div>
+  </div>
+
+</div>

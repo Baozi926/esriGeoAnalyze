@@ -78,13 +78,13 @@ define([
               .map
               .add(new FeatureLayer({url: serviceUrl, token: this.user.token}));
 
-          } else {
-            alert('失败');
           }
-          this.onAnalyzeEnd();
+
+          this.onAnalyzeEnd(res);
         }), lang.hitch(this, function (err) {
-          alert(err);
+
           this.onAnalyzeEnd();
+          alert(err);
         }))
 
       }
@@ -105,14 +105,21 @@ define([
 
           this.data.availableServices = res;
 
+          var hasService = false
+
           ArrayUtil.forEach(res, function (v) {
             if (arcgisUtil.isPointLayer(v.info.geometryType) || arcgisUtil.isPolylineLayer(v.info.geometryType)) {
+              hasService = true;
               domConstruct.create('option', {
                 value: v.url,
                 innerHTML: v.name
               }, this.layerChooseNode)
             }
           }, this);
+
+          if (!hasService) {
+             this.onNoServiceAvailable();
+          }
 
         }));
     },
@@ -184,20 +191,17 @@ define([
         innerHTML: '请选择'
       }, this.resultFolderNode);
 
-      if (this.user.info.folders.length === 0) {
+      domConstruct.create('option', {
+        value: this.user.username,
+        innerHTML: this.user.username
+      }, this.resultFolderNode)
+
+      ArrayUtil.forEach(this.user.info.folders, function (v) {
         domConstruct.create('option', {
-          value: this.user.username,
-          innerHTML: this.user.username
+          value: v.id,
+          innerHTML: v.title
         }, this.resultFolderNode)
-      } else {
-        ArrayUtil
-          .forEach(this.user.info.folders, function (v) {
-            domConstruct.create('option', {
-              value: v.id,
-              innerHTML: v.title
-            }, this.resultFolderNode)
-          }, this);
-      }
+      }, this);
 
     },
     initParams: function () {

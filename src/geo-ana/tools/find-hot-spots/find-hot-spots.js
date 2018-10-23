@@ -100,11 +100,11 @@ define([
               .mapView
               .map
               .add(new FeatureLayer({url: serviceUrl, token: this.user.token}));
-            this.onAnalyzeEnd();
-          } else {
-            alert('失败')
+
           }
+          this.onAnalyzeEnd(res);
         }), lang.hitch(this, function (err) {
+          this.onAnalyzeEnd();
           alert(err);
         }))
       }
@@ -222,7 +222,7 @@ define([
       }
 
       var info = layer.info;
-      
+
       var fields = info.fields;
 
       var avaliableFields = [];
@@ -304,6 +304,7 @@ define([
         .getCurrentDisplayLayerWithInfo({mapView: this.mapView, user: this.user})
         .then(lang.hitch(this, function (res) {
 
+          var hasService = false;
           this.data.availableServices = res;
           //为过滤后的结果生成dom
           ArrayUtil.forEach(res, function (v) {
@@ -315,12 +316,17 @@ define([
 
           ArrayUtil.forEach(res, function (v) {
             if (!arcgisUtil.isPointLayer(v.info.geometryType)) {
+              hasService = true
               domConstruct.create('option', {
                 value: v.url,
                 innerHTML: v.name
               }, this.clusterAreaNode)
             }
           }, this);
+
+          if (!hasService) {
+             this.onNoServiceAvailable();
+          }
 
         }));
     },
@@ -343,20 +349,17 @@ define([
         innerHTML: '请选择'
       }, this.resultFolderNode);
 
-      if (this.user.info.folders.length === 0) {
+      domConstruct.create('option', {
+        value: this.user.username,
+        innerHTML: this.user.username
+      }, this.resultFolderNode);
+
+      ArrayUtil.forEach(this.user.info.folders, function (v) {
         domConstruct.create('option', {
-          value: this.user.username,
-          innerHTML: this.user.username
+          value: v.id,
+          innerHTML: v.title
         }, this.resultFolderNode)
-      } else {
-        ArrayUtil
-          .forEach(this.user.info.folders, function (v) {
-            domConstruct.create('option', {
-              value: v.id,
-              innerHTML: v.title
-            }, this.resultFolderNode)
-          }, this);
-      }
+      }, this);
 
     },
     initParams: function () {

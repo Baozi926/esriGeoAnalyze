@@ -1,0 +1,50 @@
+<div class="widget extract-data">
+  <div class="main-title">
+    <span class="text">提取数据</span>
+  </div>
+  <div class="main-content">
+      <div class="step _1" data-dojo-attach-point="step_1_node">
+          <div class="title">
+              要提取的图层
+          </div>
+          <div class="content mt">
+              <select data-dojo-attach-point="layerChooseNode" data-dojo-attach-event='onchange: inputLayerChange'></select>
+          </div>
+      </div>
+      <div class="step _2" data-dojo-attach-point="step_2_node">
+          <div class="title">
+              研究区域
+          </div>
+          <div class="content mt">
+              <select data-dojo-attach-point="fieldChooseNode" data-dojo-attach-event='onchange: choosenfanweiChange'></select>
+          </div>
+      </div>
+      <div class="step _3" data-dojo-attach-point="step_3_node">
+          <div class="title">
+              输出数据格式
+          </div>
+          <div class="content mt">
+              <select data-dojo-attach-point="DataFormatChooseNode" data-dojo-attach-event='onchange: choosengeshiChange'>
+                  <option value="CSV" selected>CSV(.csv或.zip)</option>
+                  <option value="FileGeodatabase">文件地理数据库(.zip)</option>
+                  <option value="KML">KML(.kmz或.zip)</option>
+                  <option value="ShapeFile">Shapefile(.zip)</option>
+              </select>
+          </div>
+      </div>
+      <div class="step _4" data-dojo-attach-point="step_4_node">
+          <span class="title">输出文件名</span>
+          <input class="mt mbh" type="text" data-dojo-attach-event='onchange: resultNameChange' /> 将结果存在
+          <select class="mth" data-dojo-attach-point="resultFolderNode" data-dojo-attach-event='onchange: resultFolderChange'>
+              <option selected disabled hidden>请选择</option>
+              <option value="admin">管理员</option>
+          </select>
+      </div>
+      <div class="step">
+          <input class="cbox" checked type="checkbox" data-dojo-attach-point='useCurrentExtent_Node' data-dojo-attach-event='' />使用当前地图范围<br>
+          <button data-dojo-attach-point="runButtonNode" class="btn run mt" data-dojo-attach-event='onclick: runTask'>运行分析</button>
+
+      </div>
+  </div>
+
+</div>

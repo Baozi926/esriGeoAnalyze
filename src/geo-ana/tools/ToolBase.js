@@ -4,8 +4,15 @@
  *
 */
 define([
-  'dojo/_base/lang', 'dojo/dom-class', 'dojo/dom-style', 'dojo/_base/declare', 'dojo/_base/array'
-], function (lang, domClass, domStyle, declare, arrayUtil) {
+  'dojo/_base/lang',
+  'dojo/dom-class',
+  'dojo/dom-style',
+  'dojo/_base/declare',
+  'dojo/_base/array',
+  '../task-monitor/task-monitor',
+  'dojo/dom-construct',
+  'dojo/dom-style'
+], function (lang, domClass, domStyle, declare, arrayUtil, TaskMonitor, domConstruct, domStyle) {
 
   /**
    * @class
@@ -13,15 +20,64 @@ define([
    *
   */
   var widget = declare('caihm.geoAna.baseTool', [], {
-    onAnalyzeStart() {
-      this.runButtonNode.innerHTML = '<i class="fa fa-refresh fa-spin fa-fw"></i> 计算中...'
-      this.runButtonNode.disabled = true
+    constructor(options) {
+      this.toolName = options.toolName;
+      this.parent = options.parent
     },
-    onAnalyzeEnd() {
-      this.runButtonNode.innerHTML = '运行分析'
-      this.runButtonNode.disabled = false
+    onNoServiceAvailable() {
+      setTimeout(lang.hitch(this, function () {
+
+        if (this.layerChooseNode) {
+          domConstruct.empty(this.layerChooseNode);
+          domConstruct.create('option', {
+            selected: true,
+            disabled: true,
+            hidden: true,
+            innerHTML: '无可用服务'
+          }, this.layerChooseNode);
+
+          domStyle.set(this.layerChooseNode, 'border', '1px solid #ec0000');
+        }
+
+        if (this.inputLayersNode) {
+          //输入图层不是select选择框的情况下
+          domConstruct.empty(this.inputLayersNode);
+          this.inputLayersNode.innerHTML = '无可用服务';
+          domStyle.set(this.inputLayersNode, 'border', '1px solid #ec0000');
+        }
+
+      }), 10);
+
+    },
+    onAnalyzeStart() {
+      this.taskId = new Date()
+        .getTime()
+        .toString(16) + Math.round(Math.random() * 10000);
+      this.runButtonNode.innerHTML = '<i class="fa fa-refresh fa-spin fa-fw"></i> 计算中...'
+      this.runButtonNode.disabled = true;
+      var html = lang.clone(this.domNode);
+      TaskMonitor
+        .getInstance()
+        .addTask({html: html, toolName: this.toolName, taskId: this.taskId});
+
+      this
+        .parent
+        .switchPane('list');
+    },
+    onAnalyzeEnd(res) {
+      TaskMonitor
+        .getInstance()
+        .taskFinish({info: res, taskId: this.taskId});
+      this.taskId = null;
+      //如果dom已被销毁则不执行
+      if (this.runButtonNode) {
+        this.runButtonNode.innerHTML = '运行分析'
+        this.runButtonNode.disabled = false
+      }
+
     },
     postCreate() {
+
       if (this.initParams && lang.isFunction(this.initParams)) {
         this._params = this.initParams();
       } else {
@@ -148,8 +204,32 @@ define([
         ? '有效'
         : '无效', this._params)
       return {valid: allValid}
-    }
+    },
 
+    //输出位置初始化
+    initFolders() {
+      // 清空结果存储位置
+      domConstruct.empty(this.resultFolderNode);
+      domConstruct.create('option', {
+        selected: true,
+        disabled: true,
+        hidden: true,
+        innerHTML: '请选择'
+      }, this.resultFolderNode);
+
+      domConstruct.create('option', {
+        value: this.user.username,
+        innerHTML: this.user.username
+      }, this.resultFolderNode)
+
+      ArrayUtil.forEach(this.user.info.folders, function (v) { //创建文件夹信息
+        domConstruct.create('option', {
+          value: v.id,
+          innerHTML: v.title
+        }, this.resultFolderNode)
+      }, this);
+
+    }
   });
 
   return widget;

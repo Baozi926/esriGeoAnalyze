@@ -18,6 +18,11 @@ define([
   var ESRI_FEATURE_TYPE = ['esriGeometryPolygon', 'esriGeometryPoint']
 
   var instance = {
+    uuid() {
+      return new Date()
+        .getTime()
+        .toString(16) + Math.round(Math.random() * 10000);
+    },
 
     portalInfo: {},
     numberUnits: [
@@ -41,10 +46,66 @@ define([
         value: 'Yards'
       }
     ],
+    TongJiFangShiUnits: [
+      {
+        name: '总和',
+        value: 'SUM'
+      }, {
+        name: '最小值',
+        value: 'MIN'
+      }, {
+        name: '最大值',
+        value: 'MAX'
+      }, {
+        name: '平均值',
+        value: 'MEAN'
+      }, {
+        name: '标准差',
+        value: 'STD'
+      }
+    ],
+    LineUnits: [
+      {
+        name: '英里',
+        value: 'Miles'
+      }, {
+        name: '英尺',
+        value: 'Feet'
+      }, {
+        name: '千米',
+        value: 'Kilometers'
+      }, {
+        name: '米',
+        value: 'Meters'
+      }, {
+        name: '码',
+        value: 'Yards'
+      }
+    ],
+    polygonUnits: [
+      {
+        name: '平方英里',
+        value: 'SquareMiles'
+      }, {
+        name: '平方千米',
+        value: 'SquareKilometers'
+      }, {
+        name: '平方米',
+        value: 'SquareMeters'
+      }, {
+        name: '公顷',
+        value: 'Hectares'
+      }, {
+        name: '英亩',
+        value: 'Acres'
+      }
+    ],
     //将http的url强制转换为https
     forceUrlToHttps(serviceUrl) {
       if (serviceUrl.indexOf('https://') !== 0 && serviceUrl.indexOf('http://') === 0) {
         return serviceUrl.replace('http://', 'https://');
+      } else {
+        return serviceUrl;
       }
     },
 
@@ -81,6 +142,9 @@ define([
       var url = param.portalUrl + '/sharing/rest/content/users/' + param.username + '?f=json&token=' + param.token;
       esriRequest(url).then(function (res) {
         dfd.resolve(res.data)
+      },function(err){
+        dfd.reject(err);
+
       })
       return dfd
 
@@ -101,9 +165,12 @@ define([
         esriRequest(url).then(function (res) {
 
           dfd.resolve(res.data);
+        }, function (err) {
+          dfd.reject(err);
         });
 
       } else {
+        throw new Error('not implemented')
         //todo
       }
 
@@ -417,6 +484,14 @@ define([
      *
     */
     getCurrentDisplayLayerWithInfo(param) {
+
+      if (!param.mapView) {
+        throw new Error('mapView cannot be null')
+      }
+      if (!param.user) {
+        throw new Error('user cannot be null')
+      }
+
       var dfd = new Deferred();
       //获取服务
       var services = ArrayUtil.filter(param.mapView.map.allLayers.items, function (v) {
@@ -434,18 +509,30 @@ define([
       var splitServices = [];
       ArrayUtil.filter(services, function (v) {
         if (v.type === 'feature') {
-          splitServices.push({
-            url: v.source.url + '/' + v.source.layerId,
-            info: v.source.layerDefinition
-          })
+          if (v.source) {
+            splitServices.push({
+              url: v.source.url + '/' + v.source.layerId,
+              info: v.source.layerDefinition,
+              id: v.id
+
+            })
+          } else {
+            splitServices.push({
+              url: v.url + '/' + v.layerId,
+              id: v.id
+
+            })
+          }
+
         } else if (v.sublayers && v.sublayers.items) {
           ArrayUtil
             .forEach(v.sublayers.items, function (vv) {
-              splitServices.push({url: vv.url, parentName: v.title})
+              splitServices.push({url: vv.url, parentName: v.title, id: v.id, layerId: vv.id})
 
             });
         } else {
-          splitServices.push({url: v.url})
+          //只有一个图层的MapServer
+          splitServices.push({url: v.url, id: v.id, name: v.title})
         }
       });
 
@@ -458,15 +545,19 @@ define([
           .forEach(resArr, function (v, k) {
             splitServices[k].info = v;
             var parentName = splitServices[k].parentName;
-            splitServices[k].name = parentName
-              ? parentName + '-' + v.name
-              : v.name
-            // filterServices.push({layer: services[k], info: v});
+            var tmpName = parentName
+            ? parentName + '-' + v.name
+            : v.name;
+            if(tmpName){
+              splitServices[k].name = tmpName;
+            }
 
           });
 
         dfd.resolve(splitServices);
 
+      }, function (err) {
+        dfd.resolve([]);
       });
 
       return dfd;

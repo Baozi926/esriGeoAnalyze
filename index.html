@@ -31,10 +31,10 @@
       "dojo/domReady!"
     ], function (Map, MapView, GeoAna, esriConfig, FeatureLayer, MapImageLayer) {
 
-      var TOKEN = 'LfX5Tb-RJshvp_Ge7NcIUMeU9GIrrnd-MvC9gOJbkAAlWEAtayUH68cBT0ZmI2HMX5HDgJP4S0sfhTqhvTkYDfDELj_TtvgFDZPL7bGy3DjgQtCrPYITH9FrHh7ezwAZ6vLzCKj99Bj9Rs6A5CUme3PgfLw0w3cqXlLsAWcjiaM.'
+      var TOKEN = '3sq5bp3TjTYmxIEG8Wl_ZL00mWUFhu5_SEbGABXtokpc2k6gSoVA_zOddu6bBLqecEO5n_eZzT7WNqaHZpJzoUOXlBdvVDO6xxEfD4DY1kIx0r301W8xImIhEKboRFoQJgOgWdNzfVZFFUektHPMbswZsm9zPi-dF-R7z_9wbMs.'
 
       esriConfig.request.proxyUrl = './src/proxy/proxy.jsp';
-      esriConfig.request.forceProxy = true;
+      // esriConfig.request.forceProxy = true;
 
       var map = new Map({
         basemap: "streets"
@@ -42,38 +42,22 @@
 
 
 
-
-
       var view = new MapView({
         container: "viewDiv",  // Reference to the scene div created in step 5
         map: map,  // Reference to the map object created before the scene
         zoom: 4,  // Sets zoom level based on level of detail (LOD)
-        center: [15, 65]  // Sets center point of view using longitude,latitude
+        center: [120, 35]  // Sets center point of view using longitude,latitude
       });
 
-      map.add(new FeatureLayer({
-        url: 'https://map.xyzhgt.com/arcgis/rest/services/Hosted/testfeature/FeatureServer/1',
-        token: TOKEN
-      }))//
+    
+      // map.add(new FeatureLayer({
+      //   url: 'https://gis020063.xyzhgt.com/arcgis/rest/services/XinYuBaseMap/MapServer/0',
+      //   token: TOKEN
+      // }))//
 
-      map.add(new MapImageLayer({
-        url: 'https://map.xyzhgt.com/arcgis/rest/services/test/testPoint/MapServer',
-        token: TOKEN
-      }))//
-
-      map.add(new MapImageLayer({
-        url: 'https://map.xyzhgt.com/arcgis/rest/services/test/similarPoint2/MapServer',
-        token: TOKEN
-      }))//
-
- map.add(new MapImageLayer({
-        url: 'https://map.xyzhgt.com/arcgis/rest/services/test/testLine/MapServer',
-        token: TOKEN
-      }))//
-
-
-
-
+      // map.add(new MapImageLayer({
+      //   url: 'https://gis020053.xyzhgt.com/arcgis/rest/services/XYGT_DZHJ_2016/XYGT_DZHJ_ZHYHD_2016/MapServer'
+      // }));
 
 
       geoAna = new GeoAna({
