@@ -34,7 +34,7 @@ define([
   declare,
   template,
   arrayUtil,
-  riverInterceptTask,
+  RiverInterceptTask,
   arcgisUtil,
   // ToolBase,
   geoAnaConfig

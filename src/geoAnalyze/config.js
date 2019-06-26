@@ -78,6 +78,12 @@ define([], function () {
             // icon: 'extractdata',
             url: 'tools/river-intercept/river-intercept',
             pic: 'onemap/app/modules/geoAnalyze/images/ClipAndShip32.png'
+          },
+          {
+            name: '河道距离计算',
+            // icon: 'extractdata',
+            url: 'tools/river-length-calc/river-length-calc',
+            pic: 'onemap/app/modules/geoAnalyze/images/ClipAndShip32.png'
           }
         ]
       }

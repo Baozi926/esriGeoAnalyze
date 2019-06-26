@@ -34,7 +34,7 @@ define([
   declare,
   template,
   arrayUtil,
-  upDownStreamTracingTask,
+  UpDownStreamTracingTask,
   arcgisUtil,
 //   ToolBase,
   geoAnaConfig
