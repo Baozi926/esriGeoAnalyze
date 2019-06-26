@@ -24,14 +24,14 @@
     require([
       "esri/Map",
       "esri/views/MapView",
-      "src/geo-ana/index",
+      "src/geoAnalyze/index",
       'esri/config',
       "esri/layers/FeatureLayer",
       'esri/layers/MapImageLayer',
       "dojo/domReady!"
     ], function (Map, MapView, GeoAna, esriConfig, FeatureLayer, MapImageLayer) {
 
-      var TOKEN = 'o4JnGO8e6FngMAN9T4wwHhtftPOEG4cgr0Cat6tO1AK14pPj6trcLFgVSEhfGMbAHrvjpDmZHW1OPZ4gZKpeC8UEoNq0jWNXxN99SgaxQO6UEnZ8zZTgJFU2FzoDP2ut6hTKa0g23DD8KDNTJ-ZW4BaKYS_4xnsjIRe4TayVSX8.'
+      var TOKEN = 'VKVWaTERA4SGd0qY9M8AMOVLqPo6FRbIo29DyUJ1XNkEhTTb1uX5wrRch3i3YbTOmcPkC0PYG_zck3YBAVFYxUk1kRB5mMQ7f2fcOZ1Isr41UXGmLgjCtJx1WDyUVFUPWVz_EYagWYzpHu5EG6r1tsIgGJ9-KqIzLqDub1MrcqZinoCI2yhqFXaoQz7McWPzEyu3YezLVfkT75sMoucflg..'
 
       esriConfig.request.proxyUrl = './src/proxy/proxy.jsp';
       // esriConfig.request.forceProxy = true;
@@ -50,10 +50,11 @@
       });
 
     
-      // map.add(new FeatureLayer({
-      //   url: 'https://gis020063.xyzhgt.com/arcgis/rest/services/XinYuBaseMap/MapServer/0',
-      //   token: TOKEN
-      // }))//
+      map.add(new FeatureLayer({
+        url: 'https://gis006234.jxwrd.gov.cn/arcgis/rest/services/RV_NET/Feature_RV_NET/MapServer/3',
+        title:'河网',
+        token: TOKEN
+      }))//
 
       // map.add(new MapImageLayer({
       //   url: 'https://gis020053.xyzhgt.com/arcgis/rest/services/XYGT_DZHJ_2016/XYGT_DZHJ_ZHYHD_2016/MapServer'
@@ -62,12 +63,13 @@
 
       geoAna = new GeoAna({
         user: {
-          username: 'admin',
+          username: 'jxsladmin',
           token: TOKEN
         },
-        portalUrl: 'https://map.xyzhgt.com/arcgis/',
+        portalUrl: 'https://map3.jxwrd.gov.cn/arcgis/',
         mapView: view,
-        srcNodeId: 'geoAnaSrcNode'
+        srcNodeId: 'geoAnaSrcNode',
+        toggleButtonId:'toggleButtonId'
       });
 
 
@@ -79,6 +81,9 @@
 
   <div id="viewDiv"></div>
   <div id="geoAnaSrcNode"></div>
+  <div class="tools">
+    <button id="toggleButtonId"></button>
+  </div>
 </body>
 
 </html>

@@ -147,7 +147,7 @@ define([
       return query;
     },
 
-    isvalid() {
+    isValid() {
       //todo
       return true
     },

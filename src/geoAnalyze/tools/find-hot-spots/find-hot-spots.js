@@ -55,21 +55,21 @@ define([
 
         var extra = {}
         if (this.getParam('clusterArea')) {
-          var layer = this
-            .mapView
-            .map
-            .findLayerById(this.getParam('clusterArea'))
+          // var layer = this
+          //   .mapView
+          //   .map
+          //   .findLayerById(this.getParam('clusterArea'))
           if (this.getParam('analysisField')) {
             extra = {
               boundingPolygonLayer: {
-                url: layer.url
+                url: this.getParam('clusterArea')
               }
             }
 
           } else {
             extra = {
               aggregationPolygonLayer: {
-                url: layer.url
+                url: this.getParam('clusterArea') //layer.url
               }
             }
           }
@@ -315,7 +315,7 @@ define([
           }, this);
 
           ArrayUtil.forEach(res, function (v) {
-            if (!arcgisUtil.isPointLayer(v.info.geometryType)) {
+            if (arcgisUtil.isPointLayer(v.info.geometryType)) {
               hasService = true
               domConstruct.create('option', {
                 value: v.url,

@@ -11,8 +11,9 @@ define([
   'dojo/_base/array',
   '../task-monitor/task-monitor',
   'dojo/dom-construct',
-  'dojo/dom-style'
-], function (lang, domClass, domStyle, declare, arrayUtil, TaskMonitor, domConstruct, domStyle) {
+  'dojo/dom-style',
+  'dojo/topic'
+], function (lang, domClass, domStyle, declare, arrayUtil, TaskMonitor, domConstruct, domStyle,topic) {
 
   /**
    * @class
@@ -65,6 +66,7 @@ define([
         .switchPane('list');
     },
     onAnalyzeEnd(res) {
+      topic.publish('geoanalyze:end',{})
       TaskMonitor
         .getInstance()
         .taskFinish({info: res, taskId: this.taskId});
@@ -74,6 +76,7 @@ define([
         this.runButtonNode.innerHTML = '运行分析'
         this.runButtonNode.disabled = false
       }
+      
 
     },
     postCreate() {
@@ -83,6 +86,13 @@ define([
       } else {
         throw new Error("需要实现initParams方法，参考Demo")
       }
+      if(this.useCurrentExtent_Node){
+        this.useCurrentExtent_Node.checked = false;
+        this.setParam('use_current_extent', false);
+      }
+
+     
+      // this.useCurrentExtent_Node
     },
     _params: [],
 

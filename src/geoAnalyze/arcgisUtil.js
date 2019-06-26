@@ -18,6 +18,7 @@ define([
   var ESRI_FEATURE_TYPE = ['esriGeometryPolygon', 'esriGeometryPoint']
 
   var instance = {
+    lodMode:true,
     uuid() {
       return new Date()
         .getTime()
@@ -500,7 +501,7 @@ define([
           return vv.id === v.id
         });
         //只针对加载的服务
-        if (v.url && !isBaseMap) {
+        if (v.url && !isBaseMap&&v.listMode!=='listMode') {
           //如果mapServer只有一个图层，则按照featureLayer来处理
           return true;
         }
@@ -509,54 +510,66 @@ define([
       var splitServices = [];
       ArrayUtil.filter(services, function (v) {
         if (v.type === 'feature') {
-          if (v.source) {
-            splitServices.push({
-              url: v.source.url + '/' + v.source.layerId,
-              info: v.source.layerDefinition,
-              id: v.id
-
-            })
-          } else {
+     
             splitServices.push({
               url: v.url + '/' + v.layerId,
-              id: v.id
+              id: v.id,
+              name:v.title
 
             })
-          }
+          
 
         } else if (v.sublayers && v.sublayers.items) {
-          ArrayUtil
-            .forEach(v.sublayers.items, function (vv) {
-              splitServices.push({url: vv.url, parentName: v.title, id: v.id, layerId: vv.id})
-
+     
+            ArrayUtil
+            .forEach(v.allSublayers.items, function (vv) {
+              splitServices.unshift({url: vv.url, parentName: v.title, id: v.id, layerId: vv.id})
             });
+         
         } else {
           //只有一个图层的MapServer
           splitServices.push({url: v.url, id: v.id, name: v.title})
         }
-      });
+      },this);
 
       var promises = ArrayUtil.map(splitServices, function (v, k) {
         return instance.getLayerInfo(v.url, param.user.token);
       });
 
+      var filter = {}
+
+      var resultServices = []
+
       all(promises).then(function (resArr) {
         ArrayUtil
           .forEach(resArr, function (v, k) {
-            splitServices[k].info = v;
-            var parentName = splitServices[k].parentName;
-            var tmpName = parentName
-            ? parentName + '-' + v.name
-            : v.name;
-            if(tmpName){
-              splitServices[k].name = tmpName;
+            if(this.lodMode){
+              if(!filter[splitServices[k].id]&&v.geometryType){
+                splitServices[k].info = v;
+             
+                splitServices[k].name = splitServices[k].parentName 
+                resultServices.push(splitServices[k])
+                filter[splitServices[k].id] = true;
+              }
+
+            }else{
+              splitServices[k].info = v;
+              var parentName = splitServices[k].parentName;
+              var tmpName = parentName
+              ? parentName + '-' + v.name
+              : v.name;
+              if(tmpName){
+                splitServices[k].name = tmpName;
+              }
+              resultServices.push(splitServices[k])
             }
+           
 
-          });
+          },this);
 
-        dfd.resolve(splitServices);
+        dfd.resolve(resultServices);
 
-      }, function (err) {
+      }.bind(this), function (err) {
         dfd.resolve([]);
       });
 

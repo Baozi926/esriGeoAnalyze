@@ -214,17 +214,21 @@ li {
   display: inline-block
 }
 
-.geoAna>.detail-cnt.show .btn.close {
+.geoAna > .detail-cnt.show .btn.close {
   margin: 6px 6px 2px 0px;
   float: right;
   color: #ffffff;
   background-color: #5daddd;
-  padding: 5px 10px;
+  padding: 8px 10px;
   border-radius: 0;
   border: none;
   font-size: 12px;
+  opacity: 1;
+  font-weight: normal;
+  text-shadow: none;
+  margin: 15px 15px 0 0;
 }
-
+.geoAna > .detail-cnt .main-title{font-size: 16px;padding: 0 10px;margin: 8px 0 0 0;}
 .title.row {
   margin: 5px 4px 5px 9px;
 }
